@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Clock } from "lucide-react";
-import { format } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
 
 const timezones = [
   { label: 'Local Time', value: Intl.DateTimeFormat().resolvedOptions().timeZone },
@@ -31,17 +29,34 @@ export default function WorldClock() {
 
   const getTimeInZone = () => {
     try {
-      return formatInTimeZone(currentTime, timezone, 'HH:mm:ss');
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).format(currentTime);
     } catch {
-      return format(currentTime, 'HH:mm:ss');
+      return currentTime.toLocaleTimeString('en-US', { hour12: false });
     }
   };
 
   const getDateInZone = () => {
     try {
-      return formatInTimeZone(currentTime, timezone, 'EEEE, MMMM d, yyyy');
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(currentTime);
     } catch {
-      return format(currentTime, 'EEEE, MMMM d, yyyy');
+      return currentTime.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
     }
   };
 
