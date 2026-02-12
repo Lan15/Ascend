@@ -54,6 +54,7 @@ import Goals from './pages/Goals';
 import Progress from './pages/Progress';
 import AICoach from './pages/AICoach';
 import Achievements from './pages/Achievements';
+import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +66,7 @@ export const PAGES = {
     "Progress": Progress,
     "AICoach": AICoach,
     "Achievements": Achievements,
+    "Profile": Profile,
 }
 
 export const pagesConfig = {
