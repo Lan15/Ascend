@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { createPageUrl } from './utils';
 import { 
   LayoutDashboard, 
   Target, 
@@ -51,7 +50,7 @@ export default function Layout({ children, currentPageName }) {
               return (
                 <Link
                   key={item.path}
-                  to={createPageUrl(item.path)}
+                  to={`/${item.path}`}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                     isActive
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
@@ -82,7 +81,7 @@ export default function Layout({ children, currentPageName }) {
             return (
               <Link
                 key={item.path}
-                to={createPageUrl(item.path)}
+                to={`/${item.path}`}
                 className={`flex flex-col items-center justify-center flex-1 h-full ${
                   isActive ? 'text-purple-600' : 'text-gray-600'
                 }`}

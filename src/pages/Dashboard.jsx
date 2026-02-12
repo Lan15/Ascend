@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "./utils";
 import StatsCard from "../components/dashboard/StatsCard";
 import AchievementBadge from "../components/achievements/AchievementBadge";
 import { Target, Flame, Trophy, Clock, TrendingUp, Zap, ArrowRight } from "lucide-react";
@@ -148,19 +147,19 @@ export default function Dashboard() {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link to={createPageUrl('Today')}>
+              <Link to="/Today">
                 <Button className="w-full bg-white text-purple-600 hover:bg-gray-100">
                   <Target className="w-4 h-4 mr-2" />
                   Complete Today's Tasks
                 </Button>
               </Link>
-              <Link to={createPageUrl('AICoach')}>
+              <Link to="/AICoach">
                 <Button className="w-full bg-white/20 hover:bg-white/30 text-white">
                   <Zap className="w-4 h-4 mr-2" />
                   Get AI Suggestions
                 </Button>
               </Link>
-              <Link to={createPageUrl('Progress')}>
+              <Link to="/Progress">
                 <Button className="w-full bg-white/20 hover:bg-white/30 text-white">
                   <TrendingUp className="w-4 h-4 mr-2" />
                   View Full Analytics
@@ -179,7 +178,7 @@ export default function Dashboard() {
                   <Trophy className="w-5 h-5 text-yellow-600" />
                   Recent Achievements
                 </CardTitle>
-                <Link to={createPageUrl('Achievements')}>
+                <Link to="/Achievements">
                   <Button variant="ghost" size="sm">
                     View All <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
