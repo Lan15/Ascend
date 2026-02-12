@@ -49,14 +49,26 @@
  */
 import Dashboard from './pages/Dashboard';
 import Today from './pages/Today';
+import Routines from './pages/Routines';
+import Goals from './pages/Goals';
+import Progress from './pages/Progress';
+import AICoach from './pages/AICoach';
+import Achievements from './pages/Achievements';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Dashboard": Dashboard,
     "Today": Today,
+    "Routines": Routines,
+    "Goals": Goals,
+    "Progress": Progress,
+    "AICoach": AICoach,
+    "Achievements": Achievements,
 }
 
 export const pagesConfig = {
     mainPage: "Dashboard",
     Pages: PAGES,
+    Layout: __Layout,
 };
