@@ -8,11 +8,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Target, CheckCircle2, Calendar } from "lucide-react";
+import { Plus, Edit, Trash2, Target, CheckCircle2, Calendar, Repeat, Layers } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format } from 'date-fns';
 import { toast } from "sonner";
+import SubGoalManager from "../components/goals/SubGoalManager";
 
-const categories = ["health", "work", "learning", "personal", "fitness", "mindfulness"];
+const categories = ["health", "work", "learning", "personal", "fitness", "mindfulness", "career", "finance", "social"];
 
 export default function Goals() {
   const queryClient = useQueryClient();
@@ -23,8 +25,13 @@ export default function Goals() {
     description: '',
     target_duration_minutes: '',
     category: 'personal',
-    deadline: ''
+    deadline: '',
+    is_recurring: false,
+    recurrence_pattern: 'daily',
+    recurrence_days: [],
+    is_long_term: false
   });
+  const [expandedGoal, setExpandedGoal] = useState(null);
 
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
@@ -65,7 +72,11 @@ export default function Goals() {
       description: '',
       target_duration_minutes: '',
       category: 'personal',
-      deadline: ''
+      deadline: '',
+      is_recurring: false,
+      recurrence_pattern: 'daily',
+      recurrence_days: [],
+      is_long_term: false
     });
     setEditingGoal(null);
   };
@@ -91,13 +102,18 @@ export default function Goals() {
       description: goal.description || '',
       target_duration_minutes: goal.target_duration_minutes || '',
       category: goal.category || 'personal',
-      deadline: goal.deadline || ''
+      deadline: goal.deadline || '',
+      is_recurring: goal.is_recurring || false,
+      recurrence_pattern: goal.recurrence_pattern || 'daily',
+      recurrence_days: goal.recurrence_days || [],
+      is_long_term: goal.is_long_term || false
     });
     setShowDialog(true);
   };
 
-  const activeGoals = goals.filter(g => !g.completed);
-  const completedGoals = goals.filter(g => g.completed);
+  const activeGoals = goals.filter(g => !g.completed && !g.parent_goal_id);
+  const completedGoals = goals.filter(g => g.completed && !g.parent_goal_id);
+  const longTermGoals = goals.filter(g => g.is_long_term && !g.completed);
 
   const categoryColors = {
     health: "bg-red-100 text-red-800 border-red-200",
@@ -105,7 +121,10 @@ export default function Goals() {
     learning: "bg-purple-100 text-purple-800 border-purple-200",
     personal: "bg-green-100 text-green-800 border-green-200",
     fitness: "bg-orange-100 text-orange-800 border-orange-200",
-    mindfulness: "bg-cyan-100 text-cyan-800 border-cyan-200"
+    mindfulness: "bg-cyan-100 text-cyan-800 border-cyan-200",
+    career: "bg-indigo-100 text-indigo-800 border-indigo-200",
+    finance: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    social: "bg-pink-100 text-pink-800 border-pink-200"
   };
 
   const GoalCard = ({ goal }) => (
@@ -113,7 +132,7 @@ export default function Goals() {
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
               {goal.completed && <CheckCircle2 className="w-5 h-5 text-green-600" />}
               <h3 className={`text-xl font-semibold ${goal.completed ? 'line-through text-gray-500' : ''}`}>
                 {goal.title}
@@ -121,11 +140,23 @@ export default function Goals() {
               <span className={`px-3 py-1 rounded-full text-xs font-medium border ${categoryColors[goal.category] || categoryColors.personal}`}>
                 {goal.category}
               </span>
+              {goal.is_recurring && (
+                <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 flex items-center gap-1">
+                  <Repeat className="w-3 h-3" />
+                  {goal.recurrence_pattern?.replace('_', ' ')}
+                </span>
+              )}
+              {goal.is_long_term && (
+                <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 flex items-center gap-1">
+                  <Layers className="w-3 h-3" />
+                  Long-term
+                </span>
+              )}
             </div>
             {goal.description && (
               <p className="text-gray-600 mb-2">{goal.description}</p>
             )}
-            <div className="flex gap-4 text-sm text-gray-500">
+            <div className="flex gap-4 text-sm text-gray-500 flex-wrap">
               {goal.target_duration_minutes && (
                 <span>Target: {goal.target_duration_minutes} minutes</span>
               )}
@@ -140,6 +171,20 @@ export default function Goals() {
               <p className="text-xs text-green-600 mt-2">
                 Completed on {format(new Date(goal.completed_date), 'MMM d, yyyy')}
               </p>
+            )}
+            
+            {/* Sub-goals Section */}
+            {goal.is_long_term && !goal.completed && (
+              <div className="mt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setExpandedGoal(expandedGoal === goal.id ? null : goal.id)}
+                >
+                  <Layers className="w-4 h-4 mr-2" />
+                  {expandedGoal === goal.id ? 'Hide' : 'Show'} Sub-Goals
+                </Button>
+              </div>
             )}
           </div>
           
@@ -166,6 +211,12 @@ export default function Goals() {
             </div>
           )}
         </div>
+        
+        {expandedGoal === goal.id && (
+          <div className="mt-4 pt-4 border-t">
+            <SubGoalManager parentGoal={goal} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -193,10 +244,14 @@ export default function Goals() {
         </div>
 
         <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+          <TabsList className="grid w-full max-w-2xl grid-cols-3 mb-6">
             <TabsTrigger value="active" className="flex items-center gap-2">
               <Target className="w-4 h-4" />
               Active ({activeGoals.length})
+            </TabsTrigger>
+            <TabsTrigger value="longterm" className="flex items-center gap-2">
+              <Layers className="w-4 h-4" />
+              Long-term ({longTermGoals.length})
             </TabsTrigger>
             <TabsTrigger value="completed" className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
@@ -205,7 +260,7 @@ export default function Goals() {
           </TabsList>
 
           <TabsContent value="active" className="space-y-4">
-            {activeGoals.length === 0 ? (
+            {activeGoals.filter(g => !g.is_long_term).length === 0 ? (
               <Card>
                 <CardContent className="p-12 text-center">
                   <Target className="w-12 h-12 mx-auto mb-4 text-gray-400" />
@@ -213,7 +268,20 @@ export default function Goals() {
                 </CardContent>
               </Card>
             ) : (
-              activeGoals.map(goal => <GoalCard key={goal.id} goal={goal} />)
+              activeGoals.filter(g => !g.is_long_term).map(goal => <GoalCard key={goal.id} goal={goal} />)
+            )}
+          </TabsContent>
+
+          <TabsContent value="longterm" className="space-y-4">
+            {longTermGoals.length === 0 ? (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <Layers className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500">No long-term goals. Create one and break it down into sub-goals!</p>
+                </CardContent>
+              </Card>
+            ) : (
+              longTermGoals.map(goal => <GoalCard key={goal.id} goal={goal} />)
             )}
           </TabsContent>
 
@@ -293,6 +361,50 @@ export default function Goals() {
                   onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
                 />
               </div>
+
+              <div className="flex items-center gap-4 pt-2 border-t">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="recurring"
+                    checked={formData.is_recurring}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_recurring: checked })}
+                  />
+                  <label htmlFor="recurring" className="text-sm font-medium cursor-pointer">
+                    Recurring Goal
+                  </label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="longterm"
+                    checked={formData.is_long_term}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_long_term: checked })}
+                  />
+                  <label htmlFor="longterm" className="text-sm font-medium cursor-pointer">
+                    Long-term Goal
+                  </label>
+                </div>
+              </div>
+
+              {formData.is_recurring && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">Recurrence Pattern</label>
+                  <Select 
+                    value={formData.recurrence_pattern} 
+                    onValueChange={(value) => setFormData({ ...formData, recurrence_pattern: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="every_other_day">Every Other Day</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
