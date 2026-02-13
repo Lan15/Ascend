@@ -47,26 +47,26 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Dashboard from './pages/Dashboard';
-import Today from './pages/Today';
-import Routines from './pages/Routines';
-import Goals from './pages/Goals';
-import Progress from './pages/Progress';
 import AICoach from './pages/AICoach';
 import Achievements from './pages/Achievements';
+import Dashboard from './pages/Dashboard';
+import Goals from './pages/Goals';
 import Profile from './pages/Profile';
+import Progress from './pages/Progress';
+import Routines from './pages/Routines';
+import Today from './pages/Today';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Dashboard": Dashboard,
-    "Today": Today,
-    "Routines": Routines,
-    "Goals": Goals,
-    "Progress": Progress,
     "AICoach": AICoach,
     "Achievements": Achievements,
+    "Dashboard": Dashboard,
+    "Goals": Goals,
     "Profile": Profile,
+    "Progress": Progress,
+    "Routines": Routines,
+    "Today": Today,
 }
 
 export const pagesConfig = {

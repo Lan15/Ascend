@@ -40,14 +40,23 @@ const themeColors = {
   pink: { from: 'from-pink-500', to: 'to-rose-500', bg: 'bg-pink-500' },
   red: { from: 'from-red-500', to: 'to-pink-500', bg: 'bg-red-500' },
   teal: { from: 'from-teal-500', to: 'to-blue-500', bg: 'bg-teal-500' },
-  indigo: { from: 'from-indigo-500', to: 'to-purple-500', bg: 'bg-indigo-500' }
+  indigo: { from: 'from-indigo-500', to: 'to-purple-500', bg: 'bg-indigo-500' },
+  cyberpunk: { from: 'from-cyan-400', to: 'to-pink-600', bg: 'bg-cyan-500' },
+  forest: { from: 'from-green-600', to: 'to-emerald-800', bg: 'bg-green-700' },
+  ocean: { from: 'from-blue-900', to: 'to-cyan-600', bg: 'bg-blue-700' },
+  sunset: { from: 'from-orange-600', to: 'to-purple-900', bg: 'bg-orange-600' },
+  midnight: { from: 'from-indigo-900', to: 'to-purple-950', bg: 'bg-indigo-900' }
 };
 
 const backgrounds = {
   gradient: 'bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50',
   'solid-light': 'bg-gray-50',
   'solid-dark': 'bg-gray-900 text-white',
-  pattern: 'bg-gray-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[size:16px_16px]'
+  pattern: 'bg-gray-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[size:16px_16px]',
+  matrix: 'bg-black text-green-400',
+  starfield: 'bg-gradient-to-b from-indigo-950 via-purple-900 to-black text-white',
+  abstract: 'bg-gradient-to-br from-rose-100 via-purple-100 to-indigo-200',
+  minimal: 'bg-white'
 };
 
 export default function Layout({ children, currentPageName }) {
@@ -86,7 +95,15 @@ export default function Layout({ children, currentPageName }) {
                 Routine Quest
               </h1>
             </div>
-            {AvatarIcon && (
+            {user?.avatar_url ? (
+              <Link to="/Profile" className="relative">
+                <img 
+                  src={user.avatar_url} 
+                  alt="Profile" 
+                  className="w-10 h-10 rounded-full object-cover border-2 border-purple-500 hover:border-purple-600 transition-all"
+                />
+              </Link>
+            ) : AvatarIcon && (
               <Link to="/Profile" className={`w-10 h-10 ${theme.bg} rounded-full flex items-center justify-center hover:opacity-80 transition-opacity`}>
                 <AvatarIcon className="w-6 h-6 text-white" />
               </Link>

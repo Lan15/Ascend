@@ -11,6 +11,11 @@ const themes = [
   { id: 'red', name: 'Ruby Red', from: 'from-red-500', to: 'to-pink-500' },
   { id: 'teal', name: 'Teal Wave', from: 'from-teal-500', to: 'to-blue-500' },
   { id: 'indigo', name: 'Indigo Night', from: 'from-indigo-500', to: 'to-purple-500' },
+  { id: 'cyberpunk', name: '🎮 Cyberpunk', from: 'from-cyan-400', to: 'to-pink-600' },
+  { id: 'forest', name: '🌲 Zelda Forest', from: 'from-green-600', to: 'to-emerald-800' },
+  { id: 'ocean', name: '🌊 Ocean Depths', from: 'from-blue-900', to: 'to-cyan-600' },
+  { id: 'sunset', name: '🌅 GTA Sunset', from: 'from-orange-600', to: 'to-purple-900' },
+  { id: 'midnight', name: '🌙 Midnight', from: 'from-indigo-900', to: 'to-purple-950' },
 ];
 
 const backgrounds = [
@@ -18,6 +23,10 @@ const backgrounds = [
   { id: 'solid-light', name: 'Light', class: 'bg-gray-50' },
   { id: 'solid-dark', name: 'Dark', class: 'bg-gray-900' },
   { id: 'pattern', name: 'Pattern', class: 'bg-gray-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[size:16px_16px]' },
+  { id: 'matrix', name: '💻 Matrix', class: 'bg-black bg-[linear-gradient(transparent_1px,transparent_1px)] bg-[size:20px_20px]' },
+  { id: 'starfield', name: '⭐ Starfield', class: 'bg-gradient-to-b from-indigo-950 via-purple-900 to-black' },
+  { id: 'abstract', name: '🎨 Abstract', class: 'bg-gradient-to-br from-rose-100 via-purple-100 to-indigo-200' },
+  { id: 'minimal', name: '⬜ Minimal', class: 'bg-white' },
 ];
 
 export default function ThemeSelector({ primaryColor, background, onPrimaryChange, onBackgroundChange }) {
@@ -31,7 +40,7 @@ export default function ThemeSelector({ primaryColor, background, onPrimaryChang
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
             {themes.map(theme => (
               <button
                 key={theme.id}

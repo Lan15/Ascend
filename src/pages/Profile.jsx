@@ -3,9 +3,10 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import AvatarSelector from "../components/profile/AvatarSelector";
 import ThemeSelector from "../components/profile/ThemeSelector";
-import { Save, User as UserIcon } from "lucide-react";
+import { Save, User as UserIcon, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Profile() {
@@ -17,17 +18,41 @@ export default function Profile() {
   });
 
   const [avatar, setAvatar] = useState(user?.avatar || 'user');
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
   const [themePrimary, setThemePrimary] = useState(user?.theme_primary || 'purple');
   const [themeBackground, setThemeBackground] = useState(user?.theme_background || 'gradient');
+  const [uploading, setUploading] = useState(false);
 
   // Update state when user data loads
   React.useEffect(() => {
     if (user) {
       setAvatar(user.avatar || 'user');
+      setAvatarUrl(user.avatar_url || '');
       setThemePrimary(user.theme_primary || 'purple');
       setThemeBackground(user.theme_background || 'gradient');
     }
   }, [user]);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setAvatarUrl(file_url);
+      toast.success('Image uploaded!');
+    } catch (error) {
+      toast.error('Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.auth.updateMe(data),
@@ -40,6 +65,7 @@ export default function Profile() {
   const handleSave = () => {
     updateMutation.mutate({
       avatar,
+      avatar_url: avatarUrl,
       theme_primary: themePrimary,
       theme_background: themeBackground
     });
@@ -86,7 +112,41 @@ export default function Profile() {
         </Card>
 
         <div className="mb-6">
-          <AvatarSelector selected={avatar} onSelect={setAvatar} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Picture</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Custom Image Upload */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Upload Custom Avatar</label>
+                <div className="flex items-center gap-4">
+                  {avatarUrl && (
+                    <img src={avatarUrl} alt="Avatar" className="w-20 h-20 rounded-full object-cover border-2 border-purple-500" />
+                  )}
+                  <div className="flex-1">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="cursor-pointer"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">JPG, PNG, or GIF (max 5MB)</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Icon Avatars */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Or Choose an Icon</label>
+                <AvatarSelector selected={avatar} onSelect={(id) => {
+                  setAvatar(id);
+                  setAvatarUrl(''); // Clear custom image when selecting icon
+                }} />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="mb-6">
