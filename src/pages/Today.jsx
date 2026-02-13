@@ -10,6 +10,7 @@ import { CheckCircle2, Circle, Timer, Trophy, Sparkles } from "lucide-react";
 import { format } from 'date-fns';
 import { toast } from "sonner";
 import ActivityTimer from "../components/timer/ActivityTimer";
+import Mascot from "../components/shared/Mascot";
 
 export default function Today() {
   const queryClient = useQueryClient();
@@ -90,6 +91,8 @@ export default function Today() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="max-w-4xl mx-auto">
+        <Mascot pageContext="today" />
+        
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
