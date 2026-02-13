@@ -8,6 +8,9 @@ import WorldClock from "../components/dashboard/WorldClock";
 import MiniCalendar from "../components/dashboard/MiniCalendar";
 import ShareProgress from "../components/shared/ShareProgress";
 import Mascot from "../components/shared/Mascot";
+import XPProgressBar from "../components/gamification/XPProgressBar";
+import HealthSyncPanel from "../components/gamification/HealthSyncPanel";
+import GemsDisplay from "../components/gamification/GemsDisplay";
 import { Target, Flame, Trophy, Clock, TrendingUp, Zap, ArrowRight, Share2, Award } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +19,11 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { format, subDays, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
 
 export default function Dashboard() {
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
   const { data: routines = [] } = useQuery({
     queryKey: ['routines'],
     queryFn: () => base44.entities.Routine.filter({ active: true })
@@ -124,28 +132,10 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Level Progress Bar */}
-          <Card className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
-                <div className="flex-shrink-0">
-                  <div className="relative">
-                    <Award className="w-12 h-12" />
-                    <div className="absolute -bottom-1 -right-1 bg-yellow-500 text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white">
-                      {level}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-semibold">Level {level}</span>
-                    <span className="text-sm opacity-90">{currentLevelCompletions}/10 to Level {level + 1}</span>
-                  </div>
-                  <Progress value={progressToNextLevel} className="h-3 bg-white/20" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* XP Progress Bar */}
+          <div className="mt-6">
+            <XPProgressBar totalXp={user?.total_xp || 0} />
+          </div>
         </div>
 
         {/* Quick Stats */}
@@ -195,10 +185,18 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Clock and Calendar */}
+        {/* Clock, Calendar, Gems, and Health */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <WorldClock />
           <MiniCalendar completions={completions} />
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <GemsDisplay 
+            gems={user?.gems || 0} 
+            streakFreezes={user?.streak_freezes || 0}
+          />
+          <HealthSyncPanel />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">

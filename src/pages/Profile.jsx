@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import AvatarSelector from "../components/profile/AvatarSelector";
 import ThemeSelector from "../components/profile/ThemeSelector";
-import { Save, User as UserIcon, Upload, Image as ImageIcon } from "lucide-react";
+import XPProgressBar from "../components/gamification/XPProgressBar";
+import HealthSyncPanel from "../components/gamification/HealthSyncPanel";
+import { Save, User as UserIcon, Upload, Image as ImageIcon, Download } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Profile() {
@@ -89,27 +91,53 @@ export default function Profile() {
           <p className="text-gray-600 mt-2">Personalize your Routine Quest experience</p>
         </div>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserIcon className="w-5 h-5" />
-              Your Profile
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p className="text-sm text-gray-600">
-                <span className="font-semibold">Name:</span> {user?.full_name || 'User'}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-semibold">Email:</span> {user?.email}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-semibold">Role:</span> {user?.role || 'user'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserIcon className="w-5 h-5" />
+                Your Profile
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600">
+                  <span className="font-semibold">Name:</span> {user?.full_name || 'User'}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-semibold">Email:</span> {user?.email}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-semibold">Role:</span> {user?.role || 'user'}
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full mt-4"
+                  onClick={() => {
+                    const data = { user, completions: [], goals: [] };
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'routine-quest-data.json';
+                    a.click();
+                    toast.success('Data exported!');
+                  }}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export Data (JSON)
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <XPProgressBar totalXp={user?.total_xp || 0} />
+        </div>
+
+        <div className="mb-6">
+          <HealthSyncPanel />
+        </div>
 
         <div className="mb-6">
           <Card>

@@ -38,6 +38,11 @@ export default function Today() {
     queryFn: () => base44.entities.CompletionLog.filter({ completion_date: today })
   });
 
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
   const completeMutation = useMutation({
     mutationFn: async ({ item, timeSpent, type }) => {
       await base44.entities.CompletionLog.create({
@@ -47,6 +52,14 @@ export default function Today() {
         time_spent_minutes: timeSpent,
         learning: learning,
         notes: notes
+      });
+
+      // Award XP
+      const xpGained = type === 'routine' ? 10 : 50;
+      const gemsGained = 2;
+      await base44.auth.updateMe({
+        total_xp: (user?.total_xp || 0) + xpGained,
+        gems: (user?.gems || 0) + gemsGained
       });
 
       if (type === 'goal') {
@@ -59,13 +72,15 @@ export default function Today() {
     onSuccess: () => {
       queryClient.invalidateQueries(['completions']);
       queryClient.invalidateQueries(['goals']);
+      queryClient.invalidateQueries(['currentUser']);
       setSelectedItem(null);
       setShowTimer(false);
       setLearning('');
       setNotes('');
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
-      toast.success("Great job! Task completed! 🎉");
+      const xp = selectedItem?.type === 'routine' ? 10 : 50;
+      toast.success(`Great job! +${xp} XP +2 💎`);
     }
   });
 
