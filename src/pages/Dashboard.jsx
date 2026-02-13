@@ -149,18 +149,10 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
-            title="Current Streak"
-            value={`${streak} days`}
-            icon={Flame}
-            color="orange"
-            trend={streak > 0 ? "up" : "down"}
-            trendValue={streak > 0 ? "Keep it up!" : "Start today"}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           <StatsCard
             title="Today's Progress"
-            value={`${todayCompletions.length}/${routines.length}`}
+            value={`${todayCompletions.length}/${routines.length || 0}`}
             icon={Target}
             color="green"
           />
@@ -176,6 +168,31 @@ export default function Dashboard() {
             icon={Trophy}
             color="yellow"
           />
+          <Card className="bg-gradient-to-br from-orange-50 to-red-50">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <p className="text-sm text-gray-600 font-medium">Current Streak</p>
+                  <p className="text-3xl font-bold mt-2">{streak}</p>
+                  <div className="flex gap-1 mt-2">
+                    {Array.from({ length: Math.min(streak, 7) }).map((_, i) => (
+                      <span key={i} className="text-xl">🔥</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="p-3 bg-orange-500 bg-opacity-20 rounded-xl">
+                  <Flame className="w-6 h-6 text-orange-600" />
+                </div>
+              </div>
+              {streak === 0 && (
+                <Link to="/Today">
+                  <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
+                    Start First Quest
+                  </Button>
+                </Link>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Clock and Calendar */}

@@ -69,7 +69,7 @@ export default function ShareProgress({ trigger, stats }) {
 
           {/* Preview Card */}
           <div id="share-card" className="p-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl text-white">
-            <h2 className="text-2xl font-bold mb-4">My Routine Quest Progress 🎯</h2>
+            <h2 className="text-2xl font-bold mb-4">Routine Quest Progress 🎯</h2>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Streak:</span>
