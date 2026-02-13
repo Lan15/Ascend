@@ -2,9 +2,12 @@ import React from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Award, Star } from "lucide-react";
+import { Trophy, Award, Star, Share2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { format } from 'date-fns';
-import AchievementBadge from "../components/achievements/AchievementBadge";
+import PrestigeBadge from "../components/achievements/PrestigeBadge";
+import ShareProgress from "../components/shared/ShareProgress";
+import Mascot from "../components/shared/Mascot";
 
 export default function Achievements() {
   const { data: achievements = [] } = useQuery({
@@ -33,14 +36,36 @@ export default function Achievements() {
     count: achievements.filter(a => a.badge === badge).length
   }));
 
+  const shareStats = {
+    streak: 0,
+    achievements: achievements.length,
+    completions: completions.length,
+    timeSpent: 0
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-6">
       <div className="max-w-6xl mx-auto">
+        <Mascot pageContext="achievements" />
+        
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-            Achievements & Medals 🏆
-          </h1>
-          <p className="text-gray-600 mt-2">Your journey to greatness</p>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                Achievements & Medals 🏆
+              </h1>
+              <p className="text-gray-600 mt-2">Your journey to greatness</p>
+            </div>
+            <ShareProgress 
+              trigger={
+                <Button variant="outline" className="gap-2">
+                  <Share2 className="w-4 h-4" />
+                  Share Achievements
+                </Button>
+              }
+              stats={shareStats}
+            />
+          </div>
         </div>
 
         {/* Level Card */}
@@ -110,10 +135,16 @@ export default function Achievements() {
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                {achievements.map(achievement => (
+                {achievements.map((achievement, idx) => (
                   <div key={achievement.id} className="text-center">
-                    <AchievementBadge achievement={achievement} size="lg" />
-                    <p className="text-sm text-gray-600 mt-3">{achievement.description}</p>
+                    <PrestigeBadge 
+                      level={achievement.badge}
+                      size="lg"
+                      rank={idx + 1}
+                      animated={true}
+                    />
+                    <p className="font-semibold mt-3">{achievement.title}</p>
+                    <p className="text-sm text-gray-600 mt-1">{achievement.description}</p>
                     <p className="text-xs text-gray-400 mt-1">
                       {format(new Date(achievement.earned_date), 'MMM d, yyyy')}
                     </p>
