@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Edit, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
+import { Plus, Edit, Trash2, ToggleLeft, ToggleRight, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import QuickStartButtons from "../components/shared/QuickStartButtons";
 
 const categories = ["health", "work", "learning", "personal", "fitness", "mindfulness"];
 
@@ -101,6 +102,21 @@ export default function Routines() {
     });
   };
 
+  const handleQuickStart = (item) => {
+    if (!item) {
+      setShowDialog(true);
+      return;
+    }
+    setFormData({
+      title: item.label,
+      description: item.description,
+      target_duration_minutes: item.duration,
+      category: item.category,
+      active: true
+    });
+    setShowDialog(true);
+  };
+
   const categoryColors = {
     health: "bg-red-100 text-red-800 border-red-200",
     work: "bg-blue-100 text-blue-800 border-blue-200",
@@ -191,8 +207,13 @@ export default function Routines() {
 
           {routines.length === 0 && (
             <Card className="bg-white">
-              <CardContent className="p-12 text-center">
-                <p className="text-gray-500">No routines yet. Create your first one to get started!</p>
+              <CardContent className="p-8">
+                <div className="text-center mb-6">
+                  <Sparkles className="w-12 h-12 mx-auto mb-3 text-purple-500" />
+                  <h3 className="text-xl font-semibold mb-2">Start Your Journey</h3>
+                  <p className="text-gray-500">Choose a quick start or create your own custom routine</p>
+                </div>
+                <QuickStartButtons onSelect={handleQuickStart} type="routine" />
               </CardContent>
             </Card>
           )}

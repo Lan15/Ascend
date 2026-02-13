@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { toast } from "sonner";
 import ActivityTimer from "../components/timer/ActivityTimer";
 import Mascot from "../components/shared/Mascot";
+import ConfettiEffect from "../components/shared/ConfettiEffect";
 
 export default function Today() {
   const queryClient = useQueryClient();
@@ -18,6 +19,7 @@ export default function Today() {
   const [showTimer, setShowTimer] = useState(false);
   const [learning, setLearning] = useState('');
   const [notes, setNotes] = useState('');
+  const [showConfetti, setShowConfetti] = useState(false);
   
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -61,6 +63,8 @@ export default function Today() {
       setShowTimer(false);
       setLearning('');
       setNotes('');
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
       toast.success("Great job! Task completed! 🎉");
     }
   });
@@ -92,6 +96,7 @@ export default function Today() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="max-w-4xl mx-auto">
         <Mascot pageContext="today" />
+        <ConfettiEffect trigger={showConfetti} />
         
         {/* Header */}
         <div className="mb-8">

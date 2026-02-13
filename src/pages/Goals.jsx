@@ -265,9 +265,47 @@ export default function Goals() {
           <TabsContent value="active" className="space-y-4">
             {activeGoals.filter(g => !g.is_long_term).length === 0 ? (
               <Card>
-                <CardContent className="p-12 text-center">
-                  <Target className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-500">No active goals. Set your first goal to get started!</p>
+                <CardContent className="p-8">
+                  <div className="text-center mb-6">
+                    <Target className="w-12 h-12 mx-auto mb-3 text-purple-500" />
+                    <h3 className="text-xl font-semibold mb-2">Set Your First Goal</h3>
+                    <p className="text-gray-500 mb-6">Quick starts to help you get going</p>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <Button
+                      variant="outline"
+                      className="h-auto flex flex-col items-center gap-2 p-4 hover:border-purple-500 hover:bg-purple-50"
+                      onClick={() => {
+                        setFormData({ ...formData, title: "Lose 10 pounds", category: "health" });
+                        setShowDialog(true);
+                      }}
+                    >
+                      <span className="text-2xl">💪</span>
+                      <span className="text-sm font-medium">Get Fit</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="h-auto flex flex-col items-center gap-2 p-4 hover:border-purple-500 hover:bg-purple-50"
+                      onClick={() => {
+                        setFormData({ ...formData, title: "Learn a new skill", category: "learning" });
+                        setShowDialog(true);
+                      }}
+                    >
+                      <span className="text-2xl">📚</span>
+                      <span className="text-sm font-medium">Learn</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="h-auto flex flex-col items-center gap-2 p-4 hover:border-purple-500 hover:bg-purple-50"
+                      onClick={() => {
+                        resetForm();
+                        setShowDialog(true);
+                      }}
+                    >
+                      <Plus className="w-6 h-6 text-purple-600" />
+                      <span className="text-sm font-medium">Custom</span>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ) : (

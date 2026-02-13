@@ -71,14 +71,14 @@ export default function Layout({ children, currentPageName }) {
   const AvatarIcon = avatarIcons[user?.avatar || 'user'];
 
   const navItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard' },
-    { name: 'Today', icon: CheckSquare, path: 'Today' },
-    { name: 'Routines', icon: Calendar, path: 'Routines' },
-    { name: 'Goals', icon: Target, path: 'Goals' },
-    { name: 'Progress', icon: TrendingUp, path: 'Progress' },
-    { name: 'AI Coach', icon: Sparkles, path: 'AICoach' },
-    { name: 'Achievements', icon: Trophy, path: 'Achievements' },
-    { name: 'Profile', icon: User, path: 'Profile' }
+    { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', tooltip: 'Overview & Stats' },
+    { name: 'Today', icon: CheckSquare, path: 'Today', tooltip: "Today's Tasks" },
+    { name: 'Routines', icon: Calendar, path: 'Routines', tooltip: 'Daily Habits' },
+    { name: 'Goals', icon: Target, path: 'Goals', tooltip: 'Set & Track Goals' },
+    { name: 'Progress', icon: TrendingUp, path: 'Progress', tooltip: 'View Analytics' },
+    { name: 'AI Coach', icon: Sparkles, path: 'AICoach', tooltip: 'Get AI Guidance' },
+    { name: 'Achievements', icon: Trophy, path: 'Achievements', tooltip: 'Earn Trophies', highlight: true },
+    { name: 'Profile', icon: User, path: 'Profile', tooltip: 'Settings' }
   ];
 
   return (
@@ -124,16 +124,20 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={item.path}
                   to={`/${item.path}`}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all relative ${
                     isActive
                       ? `bg-gradient-to-r ${theme.from} ${theme.to} text-white shadow-md`
                       : user?.theme_background === 'solid-dark'
                       ? 'text-gray-300 hover:bg-gray-700'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
+                  title={item.tooltip}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="font-medium">{item.name}</span>
+                  {item.highlight && !isActive && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+                  )}
                 </Link>
               );
             })}
