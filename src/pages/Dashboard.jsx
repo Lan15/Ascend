@@ -3,12 +3,15 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import StatsCard from "../components/dashboard/StatsCard";
-import AchievementBadge from "../components/achievements/AchievementBadge";
+import PrestigeBadge from "../components/achievements/PrestigeBadge";
 import WorldClock from "../components/dashboard/WorldClock";
 import MiniCalendar from "../components/dashboard/MiniCalendar";
-import { Target, Flame, Trophy, Clock, TrendingUp, Zap, ArrowRight } from "lucide-react";
+import ShareProgress from "../components/shared/ShareProgress";
+import Mascot from "../components/shared/Mascot";
+import { Target, Flame, Trophy, Clock, TrendingUp, Zap, ArrowRight, Share2, Award } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { format, subDays, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
 
@@ -62,6 +65,12 @@ export default function Dashboard() {
 
   const streak = calculateStreak();
 
+  // Calculate level and progress
+  const totalCompletions = completions.length;
+  const level = Math.floor(totalCompletions / 10) + 1;
+  const currentLevelCompletions = totalCompletions % 10;
+  const progressToNextLevel = (currentLevelCompletions / 10) * 100;
+
   // Weekly completion chart data
   const getLast7DaysData = () => {
     const data = [];
@@ -80,15 +89,63 @@ export default function Dashboard() {
   const weeklyData = getLast7DaysData();
   const totalTimeSpent = completions.reduce((sum, c) => sum + (c.time_spent_minutes || 0), 0);
 
+  const shareStats = {
+    streak,
+    achievements: achievements.length,
+    completions: completions.length,
+    timeSpent: Math.floor(totalTimeSpent / 60)
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Mascot */}
+        <Mascot pageContext="dashboard" />
+        
+        {/* Header with Level Progress */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Welcome Back, Champion! 🎮
-          </h1>
-          <p className="text-gray-600 mt-2">Let's level up your productivity today</p>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Welcome Back, Champion! 🎮
+              </h1>
+              <p className="text-gray-600 mt-2">Let's level up your productivity today</p>
+            </div>
+            <div className="flex gap-3">
+              <ShareProgress 
+                trigger={
+                  <Button variant="outline" className="gap-2">
+                    <Share2 className="w-4 h-4" />
+                    Share Progress
+                  </Button>
+                }
+                stats={shareStats}
+              />
+            </div>
+          </div>
+
+          {/* Level Progress Bar */}
+          <Card className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0">
+                  <div className="relative">
+                    <Award className="w-12 h-12" />
+                    <div className="absolute -bottom-1 -right-1 bg-yellow-500 text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white">
+                      {level}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-semibold">Level {level}</span>
+                    <span className="text-sm opacity-90">{currentLevelCompletions}/10 to Level {level + 1}</span>
+                  </div>
+                  <Progress value={progressToNextLevel} className="h-3 bg-white/20" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Quick Stats */}
@@ -196,7 +253,12 @@ export default function Dashboard() {
             <CardContent>
               <div className="flex gap-6 overflow-x-auto pb-4">
                 {achievements.map(achievement => (
-                  <AchievementBadge key={achievement.id} achievement={achievement} size="md" />
+                  <PrestigeBadge 
+                    key={achievement.id} 
+                    level={achievement.badge}
+                    size="md"
+                    rank={achievement.type === 'streak' ? streak : null}
+                  />
                 ))}
               </div>
             </CardContent>
