@@ -8,6 +8,7 @@ import AvatarSelector from "../components/profile/AvatarSelector";
 import ThemeSelector from "../components/profile/ThemeSelector";
 import XPProgressBar from "../components/gamification/XPProgressBar";
 import HealthSyncPanel from "../components/gamification/HealthSyncPanel";
+import WeeklyReportButton from "../components/profile/WeeklyReportButton";
 import { Save, User as UserIcon, Upload, Image as ImageIcon, Download } from "lucide-react";
 import { toast } from "sonner";
 
@@ -135,8 +136,19 @@ export default function Profile() {
           <XPProgressBar totalXp={user?.total_xp || 0} />
         </div>
 
-        <div className="mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <HealthSyncPanel />
+          <Card>
+            <CardHeader>
+              <CardTitle>Email Reports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 mb-4">
+                Get your weekly progress summary delivered to your inbox
+              </p>
+              <WeeklyReportButton />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="mb-6">

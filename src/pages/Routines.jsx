@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Edit, Trash2, ToggleLeft, ToggleRight, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import QuickStartButtons from "../components/shared/QuickStartButtons";
+import CalendarSync from "../components/routines/CalendarSync";
 
 const categories = ["health", "work", "learning", "personal", "fitness", "mindfulness"];
 
@@ -168,7 +169,8 @@ export default function Routines() {
                     )}
                   </div>
                   
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
+                    <CalendarSync routine={routine} />
                     <Button
                       variant="ghost"
                       size="icon"

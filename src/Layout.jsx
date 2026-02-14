@@ -97,7 +97,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
             <div className="flex items-center gap-3">
               {user?.full_name && (
-                <span className="hidden md:block text-sm font-medium text-gray-700">
+                <span className="hidden md:block text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 px-3 py-1 rounded-full">
                   {user.full_name}
                 </span>
               )}

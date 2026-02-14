@@ -3,20 +3,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Activity, Heart, Footprints, Zap, CheckCircle2, XCircle } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export default function HealthSyncPanel() {
+  const queryClient = useQueryClient();
   const [syncing, setSyncing] = useState(false);
-  const [connected, setConnected] = useState(false);
 
-  const handleConnect = async () => {
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const updateProviderMutation = useMutation({
+    mutationFn: (provider) => base44.auth.updateMe({ health_sync_provider: provider }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['currentUser']);
+      toast.success('Health sync provider updated!');
+    }
+  });
+
+  const connected = !!user?.health_sync_provider;
+
+  const handleProviderChange = (provider) => {
     setSyncing(true);
-    // Placeholder for actual health integration
     setTimeout(() => {
-      setConnected(!connected);
+      updateProviderMutation.mutate(provider);
       setSyncing(false);
-      toast.success(connected ? "Health sync disconnected" : "Health sync connected!");
-    }, 1500);
+    }, 500);
+  };
+
+  const handleDisconnect = () => {
+    updateProviderMutation.mutate(null);
   };
 
   const healthMetrics = [
@@ -41,20 +60,61 @@ export default function HealthSyncPanel() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <p className="font-medium">Apple Health / Google Fit</p>
-            <p className="text-sm text-gray-500">Auto-log workouts and steps</p>
+        {!connected ? (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-600">Choose your health tracking provider:</p>
+            <div className="grid gap-3">
+              <Button 
+                onClick={() => handleProviderChange('apple_health')}
+                disabled={syncing}
+                variant="outline"
+                className="justify-start h-auto p-4"
+              >
+                <div className="text-left">
+                  <p className="font-medium">Apple Health</p>
+                  <p className="text-xs text-gray-500">iOS devices only</p>
+                </div>
+              </Button>
+              <Button 
+                onClick={() => handleProviderChange('google_fit')}
+                disabled={syncing}
+                variant="outline"
+                className="justify-start h-auto p-4"
+              >
+                <div className="text-left">
+                  <p className="font-medium">Google Fit</p>
+                  <p className="text-xs text-gray-500">Android devices</p>
+                </div>
+              </Button>
+              <Button 
+                onClick={() => handleProviderChange('strava')}
+                disabled={syncing}
+                variant="outline"
+                className="justify-start h-auto p-4"
+              >
+                <div className="text-left">
+                  <p className="font-medium">Strava</p>
+                  <p className="text-xs text-gray-500">Running & cycling</p>
+                </div>
+              </Button>
+            </div>
           </div>
-          <Button 
-            onClick={handleConnect}
-            disabled={syncing}
-            variant={connected ? "outline" : "default"}
-            className={connected ? "" : "bg-green-600 hover:bg-green-700"}
-          >
-            {syncing ? "Connecting..." : connected ? "Disconnect" : "Connect"}
-          </Button>
-        </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+              <div>
+                <p className="font-medium capitalize">{user.health_sync_provider?.replace('_', ' ')}</p>
+                <p className="text-sm text-gray-500">Connected & syncing</p>
+              </div>
+              <Button 
+                onClick={handleDisconnect}
+                variant="outline"
+              >
+                Disconnect
+              </Button>
+            </div>
+          </div>
+        )}
 
         {connected && (
           <div className="grid grid-cols-2 gap-3">

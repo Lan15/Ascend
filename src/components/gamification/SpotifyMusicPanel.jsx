@@ -19,10 +19,13 @@ export default function SpotifyMusicPanel() {
 
   const handleConnect = async () => {
     setConnecting(true);
+    // For real Spotify integration, we'd need OAuth
+    // For now, this is a demo implementation
+    toast.info('Spotify OAuth integration coming soon! Backend functions enabled.');
     setTimeout(() => {
       setConnected(!connected);
       setConnecting(false);
-      toast.success(connected ? "Spotify disconnected" : "Spotify connected!");
+      toast.success(connected ? "Spotify disconnected" : "Demo mode connected!");
     }, 1500);
   };
 
