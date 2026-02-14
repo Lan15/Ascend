@@ -75,9 +75,11 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Today', icon: CheckSquare, path: 'Today', tooltip: "Today's Tasks" },
     { name: 'Routines', icon: Calendar, path: 'Routines', tooltip: 'Daily Habits' },
     { name: 'Goals', icon: Target, path: 'Goals', tooltip: 'Set & Track Goals' },
+    { name: 'Challenges', icon: Trophy, path: 'Challenges', tooltip: 'Active Challenges', highlight: true },
+    { name: 'Leaderboard', icon: Crown, path: 'Leaderboard', tooltip: 'Weekly Rankings' },
     { name: 'Progress', icon: TrendingUp, path: 'Progress', tooltip: 'View Analytics' },
     { name: 'AI Coach', icon: Sparkles, path: 'AICoach', tooltip: 'Get AI Guidance' },
-    { name: 'Achievements', icon: Trophy, path: 'Achievements', tooltip: 'Earn Trophies', highlight: true },
+    { name: 'Achievements', icon: Trophy, path: 'Achievements', tooltip: 'Earn Trophies' },
     { name: 'Profile', icon: User, path: 'Profile', tooltip: 'Settings' }
   ];
 
