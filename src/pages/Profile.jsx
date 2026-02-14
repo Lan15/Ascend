@@ -15,15 +15,24 @@ import { toast } from "sonner";
 export default function Profile() {
   const queryClient = useQueryClient();
   
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading, error } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me()
+    queryFn: async () => {
+      try {
+        return await base44.auth.me();
+      } catch (err) {
+        console.error('Profile load error:', err);
+        throw err;
+      }
+    },
+    retry: 1,
+    staleTime: 0
   });
 
-  const [avatar, setAvatar] = useState(user?.avatar || 'user');
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
-  const [themePrimary, setThemePrimary] = useState(user?.theme_primary || 'purple');
-  const [themeBackground, setThemeBackground] = useState(user?.theme_background || 'gradient');
+  const [avatar, setAvatar] = useState('user');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [themePrimary, setThemePrimary] = useState('purple');
+  const [themeBackground, setThemeBackground] = useState('gradient');
   const [uploading, setUploading] = useState(false);
 
   // Update state when user data loads
@@ -74,12 +83,33 @@ export default function Profile() {
     });
   };
 
-  if (isLoading || !user) {
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Error loading profile</p>
+          <Button onClick={() => window.location.reload()}>Reload</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <p className="text-gray-500">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <div className="text-center">
+          <p className="text-gray-500">No user data available</p>
         </div>
       </div>
     );
