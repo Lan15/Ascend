@@ -9,7 +9,8 @@ import ThemeSelector from "../components/profile/ThemeSelector";
 import XPProgressBar from "../components/gamification/XPProgressBar";
 import HealthSyncPanel from "../components/gamification/HealthSyncPanel";
 import WeeklyReportButton from "../components/profile/WeeklyReportButton";
-import { Save, User as UserIcon, Upload, Image as ImageIcon, Download } from "lucide-react";
+import ShareProgress from "../components/shared/ShareProgress";
+import { Save, User as UserIcon, Upload, Image as ImageIcon, Download, Share2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Profile() {
@@ -34,6 +35,7 @@ export default function Profile() {
   const [themePrimary, setThemePrimary] = useState('purple');
   const [themeBackground, setThemeBackground] = useState('gradient');
   const [uploading, setUploading] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   // Update state when user data loads
   React.useEffect(() => {
@@ -180,6 +182,36 @@ export default function Profile() {
                 Get your weekly progress summary delivered to your inbox
               </p>
               <WeeklyReportButton />
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Share2 className="w-5 h-5" />
+                Share Your Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 mb-4">
+                Share your achievements and progress with friends on social media
+              </p>
+              <ShareProgress
+                isOpen={showShareDialog}
+                onClose={() => setShowShareDialog(false)}
+                progressData={{
+                  level: Math.floor(Math.sqrt((user?.total_xp || 0) / 100)),
+                  xp: user?.total_xp || 0,
+                  streak: user?.current_streak || 0,
+                  longestStreak: user?.longest_streak || 0
+                }}
+              />
+              <Button onClick={() => setShowShareDialog(true)} variant="outline" className="w-full">
+                <Share2 className="w-4 h-4 mr-2" />
+                Share Progress
+              </Button>
             </CardContent>
           </Card>
         </div>
