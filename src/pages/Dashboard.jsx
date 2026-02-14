@@ -9,7 +9,7 @@ import MiniCalendar from "../components/dashboard/MiniCalendar";
 import ShareProgress from "../components/shared/ShareProgress";
 import Mascot from "../components/shared/Mascot";
 import XPProgressBar from "../components/gamification/XPProgressBar";
-import HealthSyncPanel from "../components/gamification/HealthSyncPanel";
+import SpotifyMusicPanel from "../components/gamification/SpotifyMusicPanel";
 import GemsDisplay from "../components/gamification/GemsDisplay";
 import { Target, Flame, Trophy, Clock, TrendingUp, Zap, ArrowRight, Share2, Award } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -196,7 +196,7 @@ export default function Dashboard() {
             gems={user?.gems || 0} 
             streakFreezes={user?.streak_freezes || 0}
           />
-          <HealthSyncPanel />
+          <SpotifyMusicPanel />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
