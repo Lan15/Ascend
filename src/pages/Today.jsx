@@ -79,6 +79,12 @@ export default function Today() {
           completed_date: new Date().toISOString()
         });
       }
+
+      // Update backend calculations
+      if (type === 'routine') {
+        base44.functions.invoke('updateHabitStrength', { routineId: item.id }).catch(e => console.error(e));
+      }
+      base44.functions.invoke('updateLeaderboard', {}).catch(e => console.error(e));
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['completions']);

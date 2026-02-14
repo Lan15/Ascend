@@ -50,6 +50,7 @@ Deno.serve(async (req) => {
       'Content-Type: text/html; charset=utf-8',
       'MIME-Version: 1.0',
       `To: ${user.email}`,
+      `From: Routine Quest <noreply@routinequest.app>`,
       'Subject: Your Weekly Routine Quest Progress Report',
       '',
       emailHtml
