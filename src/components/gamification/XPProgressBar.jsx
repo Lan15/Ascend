@@ -11,11 +11,11 @@ export default function XPProgressBar({ totalXp = 0, compact = false }) {
   };
 
   const level = calculateLevel(totalXp);
-  const xpForCurrentLevel = Math.pow(level - 1, 2) * 100;
-  const xpForNextLevel = Math.pow(level, 2) * 100;
+  const xpForCurrentLevel = level > 0 ? Math.pow(level, 2) * 100 : 0;
+  const xpForNextLevel = Math.pow(level + 1, 2) * 100;
   const xpInCurrentLevel = totalXp - xpForCurrentLevel;
   const xpNeededForNextLevel = xpForNextLevel - xpForCurrentLevel;
-  const progress = (xpInCurrentLevel / xpNeededForNextLevel) * 100;
+  const progress = xpNeededForNextLevel > 0 ? (xpInCurrentLevel / xpNeededForNextLevel) * 100 : 0;
 
   const getLevelBadge = () => {
     if (level < 5) return { icon: Zap, color: 'from-gray-400 to-gray-600', name: 'Beginner' };
