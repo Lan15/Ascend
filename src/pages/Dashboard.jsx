@@ -1,24 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import StatsCard from "../components/dashboard/StatsCard";
-import PrestigeBadge from "../components/achievements/PrestigeBadge";
-import WorldClock from "../components/dashboard/WorldClock";
-import MiniCalendar from "../components/dashboard/MiniCalendar";
-import ShareProgress from "../components/shared/ShareProgress";
-import Mascot from "../components/shared/Mascot";
-import XPProgressBar from "../components/gamification/XPProgressBar";
-import SpotifyMusicPanel from "../components/gamification/SpotifyMusicPanel";
-import GemsDisplay from "../components/gamification/GemsDisplay";
-import { Target, Flame, Trophy, Clock, TrendingUp, Zap, ArrowRight, Share2, Award } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { format, subDays, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Settings, Save, Plus, Trash2, GripVertical } from 'lucide-react';
+import { toast } from "sonner";
+import Mascot from "../components/shared/Mascot";
+
+// Widget imports
+import StreakWidget from "../components/dashboard/widgets/StreakWidget";
+import XPWidget from "../components/dashboard/widgets/XPWidget";
+import GoalsWidget from "../components/dashboard/widgets/GoalsWidget";
+import RecentCompletionsWidget from "../components/dashboard/widgets/RecentCompletionsWidget";
+import AIInsightsWidget from "../components/dashboard/widgets/AIInsightsWidget";
+import TaskProgressWidget from "../components/dashboard/widgets/TaskProgressWidget";
+
+const AVAILABLE_WIDGETS = [
+  { id: 'streak', name: 'Streak', component: StreakWidget },
+  { id: 'xp', name: 'Level & XP', component: XPWidget },
+  { id: 'goals', name: 'Goals Progress', component: GoalsWidget },
+  { id: 'recent', name: 'Recent Completions', component: RecentCompletionsWidget },
+  { id: 'ai', name: 'AI Insights', component: AIInsightsWidget },
+  { id: 'tasks', name: 'Task Progress', component: TaskProgressWidget }
+];
+
+const DEFAULT_WIDGETS = ['streak', 'xp', 'goals', 'tasks', 'recent', 'ai'];
 
 export default function Dashboard() {
+  const queryClient = useQueryClient();
+  const [isCustomizing, setIsCustomizing] = useState(false);
+  const [widgets, setWidgets] = useState(DEFAULT_WIDGETS);
+  const [layouts, setLayouts] = useState([]);
+  const [currentLayoutName, setCurrentLayoutName] = useState('Default');
+  const [newLayoutName, setNewLayoutName] = useState('');
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
@@ -26,7 +46,7 @@ export default function Dashboard() {
 
   const { data: routines = [] } = useQuery({
     queryKey: ['routines'],
-    queryFn: () => base44.entities.Routine.filter({ active: true })
+    queryFn: () => base44.entities.Routine.list()
   });
 
   const { data: goals = [] } = useQuery({
@@ -36,276 +56,248 @@ export default function Dashboard() {
 
   const { data: completions = [] } = useQuery({
     queryKey: ['completions'],
-    queryFn: () => base44.entities.CompletionLog.list('-created_date', 100)
+    queryFn: () => base44.entities.CompletionLog.list('-created_date', 50)
   });
 
-  const { data: achievements = [] } = useQuery({
-    queryKey: ['achievements'],
-    queryFn: () => base44.entities.Achievement.list('-earned_date', 5)
-  });
-
-  // Calculate stats
-  const today = format(new Date(), 'yyyy-MM-dd');
-  const todayCompletions = completions.filter(c => c.completion_date === today);
-  const activeGoals = goals.filter(g => !g.completed);
-  const completedGoals = goals.filter(g => g.completed);
-
-  // Calculate streak
-  const calculateStreak = () => {
-    let streak = 0;
-    let currentDate = new Date();
-    
-    for (let i = 0; i < 365; i++) {
-      const dateStr = format(currentDate, 'yyyy-MM-dd');
-      const hasCompletion = completions.some(c => c.completion_date === dateStr);
-      if (hasCompletion) {
-        streak++;
-        currentDate = subDays(currentDate, 1);
-      } else if (i === 0) {
-        // Check yesterday if today has no completions
-        currentDate = subDays(currentDate, 1);
-      } else {
-        break;
+  useEffect(() => {
+    if (user?.dashboard_layouts) {
+      setLayouts(user.dashboard_layouts);
+      const activeLayout = user.dashboard_layouts.find(
+        l => l.name === user.active_dashboard_layout
+      );
+      if (activeLayout) {
+        setWidgets(activeLayout.widgets);
+        setCurrentLayoutName(activeLayout.name);
       }
     }
-    return streak;
-  };
+  }, [user]);
 
-  const streak = calculateStreak();
-
-  // Calculate level and progress
-  const totalCompletions = completions.length;
-  const level = Math.floor(totalCompletions / 10) + 1;
-  const currentLevelCompletions = totalCompletions % 10;
-  const progressToNextLevel = (currentLevelCompletions / 10) * 100;
-
-  // Weekly completion chart data
-  const getLast7DaysData = () => {
-    const data = [];
-    for (let i = 6; i >= 0; i--) {
-      const date = subDays(new Date(), i);
-      const dateStr = format(date, 'yyyy-MM-dd');
-      const count = completions.filter(c => c.completion_date === dateStr).length;
-      data.push({
-        day: format(date, 'EEE'),
-        completions: count
-      });
+  const updateUserMutation = useMutation({
+    mutationFn: (data) => base44.auth.updateMe(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['currentUser']);
+      toast.success('Dashboard saved!');
     }
-    return data;
+  });
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+    const items = Array.from(widgets);
+    const [reordered] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reordered);
+    setWidgets(items);
   };
 
-  const weeklyData = getLast7DaysData();
-  const totalTimeSpent = completions.reduce((sum, c) => sum + (c.time_spent_minutes || 0), 0);
+  const toggleWidget = (widgetId) => {
+    setWidgets(prev => 
+      prev.includes(widgetId) 
+        ? prev.filter(id => id !== widgetId)
+        : [...prev, widgetId]
+    );
+  };
 
-  const shareStats = {
-    streak,
-    achievements: achievements.length,
-    completions: completions.length,
-    timeSpent: Math.floor(totalTimeSpent / 60)
+  const saveCurrentLayout = () => {
+    const updatedLayouts = layouts.filter(l => l.name !== currentLayoutName);
+    updatedLayouts.push({ name: currentLayoutName, widgets });
+    
+    updateUserMutation.mutate({
+      dashboard_layouts: updatedLayouts,
+      active_dashboard_layout: currentLayoutName
+    });
+    setLayouts(updatedLayouts);
+    setIsCustomizing(false);
+  };
+
+  const saveAsNewLayout = () => {
+    if (!newLayoutName.trim()) {
+      toast.error('Please enter a layout name');
+      return;
+    }
+
+    const updatedLayouts = [...layouts, { name: newLayoutName, widgets }];
+    updateUserMutation.mutate({
+      dashboard_layouts: updatedLayouts,
+      active_dashboard_layout: newLayoutName
+    });
+    setLayouts(updatedLayouts);
+    setCurrentLayoutName(newLayoutName);
+    setNewLayoutName('');
+    setShowSaveDialog(false);
+    setIsCustomizing(false);
+    toast.success(`Layout "${newLayoutName}" saved!`);
+  };
+
+  const loadLayout = (layoutName) => {
+    const layout = layouts.find(l => l.name === layoutName);
+    if (layout) {
+      setWidgets(layout.widgets);
+      setCurrentLayoutName(layoutName);
+      updateUserMutation.mutate({ active_dashboard_layout: layoutName });
+    }
+  };
+
+  const deleteLayout = (layoutName) => {
+    if (layoutName === 'Default') {
+      toast.error('Cannot delete default layout');
+      return;
+    }
+    const updatedLayouts = layouts.filter(l => l.name !== layoutName);
+    updateUserMutation.mutate({ dashboard_layouts: updatedLayouts });
+    setLayouts(updatedLayouts);
+    if (currentLayoutName === layoutName) {
+      setCurrentLayoutName('Default');
+      setWidgets(DEFAULT_WIDGETS);
+    }
+    toast.success('Layout deleted');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Mascot */}
         <Mascot pageContext="dashboard" />
         
-        {/* Header with Level Progress */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Welcome back, {user?.full_name?.split(' ')[0] || 'Champion'}! 🎮
-              </h1>
-              <p className="text-gray-600 mt-2">Let's level up your productivity today</p>
-            </div>
-            <div className="flex gap-3">
-              <ShareProgress 
-                trigger={
-                  <Button variant="outline" className="gap-2">
-                    <Share2 className="w-4 h-4" />
-                    Share Progress
-                  </Button>
-                }
-                stats={shareStats}
-              />
-            </div>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Welcome back, {user?.full_name || 'User'}!
+            </h1>
+            <p className="text-gray-600 mt-1">Dashboard: {currentLayoutName}</p>
           </div>
-
-          {/* XP Progress Bar */}
-          <div className="mt-6">
-            <XPProgressBar totalXp={user?.total_xp || 0} />
+          <div className="flex gap-2">
+            {layouts.length > 0 && (
+              <select
+                value={currentLayoutName}
+                onChange={(e) => loadLayout(e.target.value)}
+                className="px-3 py-2 border rounded-lg text-sm"
+              >
+                {layouts.map(layout => (
+                  <option key={layout.name} value={layout.name}>
+                    {layout.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            <Button
+              onClick={() => setIsCustomizing(!isCustomizing)}
+              variant={isCustomizing ? "default" : "outline"}
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              {isCustomizing ? 'Done' : 'Customize'}
+            </Button>
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-          <StatsCard
-            title="Today's Progress"
-            value={`${todayCompletions.length}/${routines.length || 0}`}
-            icon={Target}
-            color="green"
-          />
-          <StatsCard
-            title="Active Goals"
-            value={activeGoals.length}
-            icon={Zap}
-            color="purple"
-          />
-          <StatsCard
-            title="Achievements"
-            value={achievements.length}
-            icon={Trophy}
-            color="yellow"
-          />
-          <Card className="bg-gradient-to-br from-orange-50 to-red-50">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between mb-3">
+        {isCustomizing && (
+          <Card className="mb-6 bg-blue-50 border-blue-200">
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-3">Customize Your Dashboard</h3>
+              <div className="space-y-3">
                 <div>
-                  <p className="text-sm text-gray-600 font-medium">Current Streak</p>
-                  <p className="text-3xl font-bold mt-2">{streak}</p>
-                  <div className="flex gap-1 mt-2">
-                    {Array.from({ length: Math.min(streak, 7) }).map((_, i) => (
-                      <span key={i} className="text-xl">🔥</span>
+                  <p className="text-sm text-gray-600 mb-2">Select widgets to display:</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {AVAILABLE_WIDGETS.map(widget => (
+                      <label key={widget.id} className="flex items-center gap-2 cursor-pointer">
+                        <Checkbox
+                          checked={widgets.includes(widget.id)}
+                          onCheckedChange={() => toggleWidget(widget.id)}
+                        />
+                        <span className="text-sm">{widget.name}</span>
+                      </label>
                     ))}
                   </div>
                 </div>
-                <div className="p-3 bg-orange-500 bg-opacity-20 rounded-xl">
-                  <Flame className="w-6 h-6 text-orange-600" />
+                <div className="flex gap-2 pt-2">
+                  <Button onClick={saveCurrentLayout} size="sm">
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Changes
+                  </Button>
+                  <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Save as New Layout
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Save New Layout</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <Input
+                          placeholder="Layout name..."
+                          value={newLayoutName}
+                          onChange={(e) => setNewLayoutName(e.target.value)}
+                        />
+                        <Button onClick={saveAsNewLayout} className="w-full">
+                          Save Layout
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  {layouts.length > 1 && currentLayoutName !== 'Default' && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => deleteLayout(currentLayoutName)}
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Layout
+                    </Button>
+                  )}
                 </div>
-              </div>
-              {streak === 0 && (
-                <Link to="/Today">
-                  <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
-                    Start First Quest
-                  </Button>
-                </Link>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Clock, Calendar, Gems, and Health */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <WorldClock />
-          <MiniCalendar completions={completions} />
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <GemsDisplay 
-            gems={user?.gems || 0} 
-            streakFreezes={user?.streak_freezes || 0}
-          />
-          <SpotifyMusicPanel />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Weekly Progress Chart */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
-                Last 7 Days Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={weeklyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="completions" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card className="bg-gradient-to-br from-purple-500 to-pink-500 text-white">
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Link to="/Today">
-                <Button className="w-full bg-white text-purple-600 hover:bg-gray-100">
-                  <Target className="w-4 h-4 mr-2" />
-                  Complete Today's Tasks
-                </Button>
-              </Link>
-              <Link to="/AICoach">
-                <Button className="w-full bg-white/20 hover:bg-white/30 text-white">
-                  <Zap className="w-4 h-4 mr-2" />
-                  Get AI Suggestions
-                </Button>
-              </Link>
-              <Link to="/Progress">
-                <Button className="w-full bg-white/20 hover:bg-white/30 text-white">
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  View Full Analytics
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Achievements */}
-        {achievements.length > 0 && (
-          <Card className="mb-8">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-yellow-600" />
-                  Recent Achievements
-                </CardTitle>
-                <Link to="/Achievements">
-                  <Button variant="ghost" size="sm">
-                    View All <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-6 overflow-x-auto pb-4">
-                {achievements.map(achievement => (
-                  <PrestigeBadge 
-                    key={achievement.id} 
-                    level={achievement.badge}
-                    size="md"
-                    rank={achievement.type === 'streak' ? streak : null}
-                  />
-                ))}
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
-            <CardContent className="p-6 text-center">
-              <Clock className="w-12 h-12 mx-auto mb-2 opacity-80" />
-              <p className="text-3xl font-bold">{Math.floor(totalTimeSpent / 60)}h {totalTimeSpent % 60}m</p>
-              <p className="text-sm opacity-90">Total Time Invested</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-br from-green-500 to-emerald-500 text-white">
-            <CardContent className="p-6 text-center">
-              <Target className="w-12 h-12 mx-auto mb-2 opacity-80" />
-              <p className="text-3xl font-bold">{completedGoals.length}</p>
-              <p className="text-sm opacity-90">Goals Achieved</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gradient-to-br from-purple-500 to-pink-500 text-white">
-            <CardContent className="p-6 text-center">
-              <Flame className="w-12 h-12 mx-auto mb-2 opacity-80" />
-              <p className="text-3xl font-bold">{completions.length}</p>
-              <p className="text-sm opacity-90">Total Completions</p>
-            </CardContent>
-          </Card>
-        </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="widgets">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {widgets.map((widgetId, index) => {
+                  const widgetConfig = AVAILABLE_WIDGETS.find(w => w.id === widgetId);
+                  if (!widgetConfig) return null;
+                  
+                  const WidgetComponent = widgetConfig.component;
+
+                  return (
+                    <Draggable key={widgetId} draggableId={widgetId} index={index} isDragDisabled={!isCustomizing}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={`${snapshot.isDragging ? 'opacity-50' : ''}`}
+                        >
+                          <div className="relative group">
+                            {isCustomizing && (
+                              <div
+                                {...provided.dragHandleProps}
+                                className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <GripVertical className="w-5 h-5 text-gray-400" />
+                              </div>
+                            )}
+                            <WidgetComponent
+                              user={user}
+                              routines={routines}
+                              goals={goals}
+                              completions={completions}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     </div>
   );

@@ -56,73 +56,93 @@ const pencilActivities = [
   )}
 ];
 
-const PencilMascot = ({ activity = 'writing' }) => {
-  const currentActivity = pencilActivities.find(a => a.id === activity) || pencilActivities[0];
-  
-  return (
-    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-      {/* Pencil Body */}
-      <motion.g
-        animate={{ 
-          rotate: activity === 'gym' ? [0, -5, 5, 0] : [0, 2, -2, 0],
-          y: activity === 'gym' ? [0, -2, 0] : 0
-        }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        {/* Wood body */}
-        <path d="M32 8 L24 52 L40 52 L32 8 Z" fill="#FCD34D" />
-        <path d="M32 8 L28 52 L32 52 Z" fill="#FBBF24" />
-        
-        {/* Eraser */}
-        <rect x="28" y="52" width="8" height="6" fill="#F87171" rx="1" />
-        <rect x="28" y="52" width="4" height="6" fill="#EF4444" rx="1" />
-        
-        {/* Metal ferrule */}
-        <rect x="27" y="50" width="10" height="3" fill="#9CA3AF" />
-        <rect x="27" y="50" width="5" height="3" fill="#6B7280" />
-        
-        {/* Pencil tip */}
-        <path d="M32 8 L26 16 L38 16 Z" fill="#92400E" />
-        <path d="M32 8 L29 16 L32 16 Z" fill="#78350F" />
-        
-        {/* Lead point */}
-        <path d="M32 2 L30 8 L34 8 Z" fill="#1F2937" />
-        
-        {/* Face */}
-        <circle cx="28" cy="30" r="1.5" fill="#1F2937" />
-        <circle cx="36" cy="30" r="1.5" fill="#1F2937" />
-        
-        {/* Happy smile */}
-        <motion.path 
-          d="M28 36 Q32 40 36 36" 
-          stroke="#1F2937" 
-          strokeWidth="1.5" 
-          fill="none"
-          animate={{ d: ["M28 36 Q32 40 36 36", "M28 36 Q32 38 36 36", "M28 36 Q32 40 36 36"] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
-        
-        {/* Blinking animation */}
-        <motion.g
-          animate={{ scaleY: [1, 0.1, 1] }}
-          transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-        >
-          <ellipse cx="28" cy="30" rx="2" ry="1" fill="#1F2937" opacity="0.3" />
-          <ellipse cx="36" cy="30" rx="2" ry="1" fill="#1F2937" opacity="0.3" />
-        </motion.g>
-      </motion.g>
-      
-      {/* Activity overlay */}
-      <motion.g
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        {currentActivity.svg}
-      </motion.g>
-    </svg>
-  );
-};
+const ClockCalendarMascot = ({ activity = 'time' }) => {
+        return (
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+            {/* Clock face */}
+            <motion.circle
+              cx="32"
+              cy="32"
+              r="22"
+              fill="#3B82F6"
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <circle cx="32" cy="32" r="20" fill="white" />
+            <circle cx="32" cy="32" r="18" stroke="#E5E7EB" strokeWidth="1" fill="white" />
+
+            {/* Clock numbers */}
+            <text x="32" y="18" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">12</text>
+            <text x="44" y="35" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">3</text>
+            <text x="32" y="48" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">6</text>
+            <text x="20" y="35" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">9</text>
+
+            {/* Clock hands */}
+            <motion.line
+              x1="32"
+              y1="32"
+              x2="32"
+              y2="22"
+              stroke="#1F2937"
+              strokeWidth="2"
+              strokeLinecap="round"
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+              style={{ transformOrigin: '32px 32px' }}
+            />
+            <motion.line
+              x1="32"
+              y1="32"
+              x2="32"
+              y2="18"
+              stroke="#3B82F6"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              animate={{ rotate: [0, 30] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              style={{ transformOrigin: '32px 32px' }}
+            />
+            <circle cx="32" cy="32" r="2" fill="#1F2937" />
+
+            {/* Calendar pages floating around */}
+            <motion.g
+              animate={{ 
+                y: [0, -3, 0],
+                rotate: [0, 5, 0]
+              }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <rect x="8" y="10" width="12" height="14" fill="white" stroke="#3B82F6" strokeWidth="1" rx="1" />
+              <rect x="8" y="10" width="12" height="3" fill="#3B82F6" />
+              <text x="14" y="18" textAnchor="middle" fontSize="6" fill="#1F2937" fontWeight="bold">15</text>
+            </motion.g>
+
+            <motion.g
+              animate={{ 
+                y: [0, 3, 0],
+                rotate: [0, -5, 0]
+              }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+            >
+              <rect x="44" y="42" width="12" height="14" fill="white" stroke="#10B981" strokeWidth="1" rx="1" />
+              <rect x="44" y="42" width="12" height="3" fill="#10B981" />
+              <text x="50" y="50" textAnchor="middle" fontSize="6" fill="#1F2937" fontWeight="bold">28</text>
+            </motion.g>
+
+            {/* Smiley face on clock */}
+            <circle cx="28" cy="28" r="1.5" fill="#1F2937" />
+            <circle cx="36" cy="28" r="1.5" fill="#1F2937" />
+            <motion.path 
+              d="M27 36 Q32 39 37 36" 
+              stroke="#1F2937" 
+              strokeWidth="1.5" 
+              fill="none"
+              animate={{ d: ["M27 36 Q32 39 37 36", "M27 36 Q32 37 37 36", "M27 36 Q32 39 37 36"] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          </svg>
+        );
+      };
 
 export default function Mascot({ pageContext }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -183,7 +203,7 @@ export default function Mascot({ pageContext }) {
               {/* Mascot Avatar */}
               <div className="flex-shrink-0">
                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                  <PencilMascot activity={activity} />
+                  <ClockCalendarMascot activity={activity} />
                 </div>
               </div>
 
