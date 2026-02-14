@@ -37,7 +37,7 @@ export default function TaskProgressWidget({ completions, routines, goals }) {
             </div>
             <div>
               <div className="text-2xl font-bold text-purple-600">
-                Goals: {goalCompletionsToday}/{activeGoals}
+                Goals: {goalCompletionsToday}
               </div>
               <p className="text-xs text-gray-500">completed today</p>
             </div>
