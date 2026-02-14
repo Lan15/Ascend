@@ -55,6 +55,8 @@ import Profile from './pages/Profile';
 import Progress from './pages/Progress';
 import Routines from './pages/Routines';
 import Today from './pages/Today';
+import Challenges from './pages/Challenges';
+import Leaderboard from './pages/Leaderboard';
 import __Layout from './Layout.jsx';
 
 
@@ -67,6 +69,8 @@ export const PAGES = {
     "Progress": Progress,
     "Routines": Routines,
     "Today": Today,
+    "Challenges": Challenges,
+    "Leaderboard": Leaderboard,
 }
 
 export const pagesConfig = {
