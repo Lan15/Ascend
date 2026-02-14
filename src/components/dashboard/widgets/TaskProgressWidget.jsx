@@ -12,16 +12,8 @@ export default function TaskProgressWidget({ completions, routines, goals }) {
   
   const activeRoutines = routines.filter(r => r.active).length;
   
-  // Count active goals (not completed, not sub-goals, and either not recurring or recurring for today)
-  const todayDay = new Date().getDay();
-  const activeGoals = goals.filter(g => {
-    if (g.completed || g.parent_goal_id) return false;
-    if (g.is_long_term) return false;
-    if (g.is_recurring && g.recurrence_days?.length > 0) {
-      return g.recurrence_days.includes(todayDay);
-    }
-    return true;
-  }).length;
+  // Count active goals shown on Today page (not completed, not sub-goals, not long-term)
+  const activeGoals = goals.filter(g => !g.completed && !g.parent_goal_id && !g.is_long_term).length;
 
   const last7Days = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd'));
   const weeklyCompletions = completions.filter(c => last7Days.includes(c.completion_date)).length;
