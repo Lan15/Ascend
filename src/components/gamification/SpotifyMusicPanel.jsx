@@ -50,8 +50,31 @@ export default function SpotifyMusicPanel() {
 
   const connectMutation = useMutation({
     mutationFn: async () => {
-      const res = await base44.functions.invoke('spotifyAuth', { action: 'getProfile' });
-      return res.data;
+      // Get authorization URL
+      const authRes = await base44.functions.invoke('spotifyAuth', { action: 'getAuthUrl' });
+      const { authUrl } = authRes.data;
+      
+      // Open popup for OAuth
+      const popup = window.open(authUrl, 'spotify-auth', 'width=500,height=700');
+      
+      // Wait for popup to close
+      return new Promise((resolve, reject) => {
+        const timer = setInterval(() => {
+          if (popup.closed) {
+            clearInterval(timer);
+            // Check if connection succeeded
+            setTimeout(() => {
+              base44.auth.me().then(user => {
+                if (user.spotify_access_token) {
+                  resolve(user);
+                } else {
+                  reject(new Error('Connection cancelled'));
+                }
+              }).catch(reject);
+            }, 1000);
+          }
+        }, 500);
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['currentUser']);
@@ -61,7 +84,7 @@ export default function SpotifyMusicPanel() {
     },
     onError: (error) => {
       console.error('Spotify connection error:', error);
-      toast.error(error?.response?.data?.error || 'Failed to connect. Please contact support to authorize Spotify.');
+      toast.error('Failed to connect to Spotify');
     }
   });
 
