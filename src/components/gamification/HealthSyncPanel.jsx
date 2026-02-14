@@ -28,9 +28,12 @@ export default function HealthSyncPanel() {
 
   const handleProviderChange = (provider) => {
     setSyncing(true);
+    // Note: Apple Health, Google Fit, and Strava are not available as OAuth app connectors
+    // This saves the user's preference for future integration
     setTimeout(() => {
       updateProviderMutation.mutate(provider);
       setSyncing(false);
+      toast.info('Provider saved. Full OAuth integration coming soon!');
     }, 500);
   };
 

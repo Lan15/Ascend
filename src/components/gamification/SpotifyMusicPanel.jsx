@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Music, Play, Pause, CheckCircle2, XCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Music, Play, Pause, CheckCircle2, XCircle, Search, TrendingUp } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -10,7 +11,8 @@ import { toast } from "sonner";
 export default function SpotifyMusicPanel() {
   const queryClient = useQueryClient();
   const [playing, setPlaying] = useState(false);
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -27,6 +29,25 @@ export default function SpotifyMusicPanel() {
     retry: false
   });
 
+  const { data: topTracks = [] } = useQuery({
+    queryKey: ['spotifyTopTracks'],
+    queryFn: async () => {
+      const res = await base44.functions.invoke('spotifyAuth', { action: 'getTopTracks' });
+      return res.data.tracks || [];
+    },
+    enabled: !!user?.spotify_connected,
+    retry: false
+  });
+
+  const { data: searchResults, refetch: searchMusic } = useQuery({
+    queryKey: ['spotifySearch', searchQuery],
+    queryFn: async () => {
+      const res = await base44.functions.invoke('spotifyAuth', { action: 'search', query: searchQuery });
+      return res.data || { tracks: { items: [] }, playlists: { items: [] } };
+    },
+    enabled: false
+  });
+
   const connectMutation = useMutation({
     mutationFn: async () => {
       const res = await base44.functions.invoke('spotifyAuth', { action: 'getProfile' });
@@ -35,10 +56,11 @@ export default function SpotifyMusicPanel() {
     onSuccess: () => {
       queryClient.invalidateQueries(['currentUser']);
       queryClient.invalidateQueries(['spotifyPlaylists']);
+      queryClient.invalidateQueries(['spotifyTopTracks']);
       toast.success('Spotify connected!');
     },
     onError: () => {
-      toast.error('Failed to connect. Please authorize Spotify in Settings.');
+      toast.error('Failed to connect. Please authorize Spotify first.');
     }
   });
 
@@ -50,17 +72,17 @@ export default function SpotifyMusicPanel() {
     onSuccess: () => {
       queryClient.invalidateQueries(['currentUser']);
       setPlaying(false);
-      setSelectedPlaylist(null);
+      setSelectedItem(null);
       toast.success('Spotify disconnected');
     }
   });
 
   const playMutation = useMutation({
-    mutationFn: async (playlistUri) => {
-      const res = await base44.functions.invoke('spotifyAuth', { 
-        action: 'play',
-        playlistUri 
-      });
+    mutationFn: async ({ uri, isTrack }) => {
+      const payload = isTrack 
+        ? { action: 'play', trackUris: [uri] }
+        : { action: 'play', playlistUri: uri };
+      const res = await base44.functions.invoke('spotifyAuth', payload);
       return res.data;
     },
     onSuccess: () => {
@@ -68,7 +90,7 @@ export default function SpotifyMusicPanel() {
       toast.success('Playing on Spotify');
     },
     onError: () => {
-      toast.error('Failed to play. Make sure Spotify is open on your device.');
+      toast.error('Make sure Spotify is open on your device.');
     }
   });
 
@@ -83,20 +105,15 @@ export default function SpotifyMusicPanel() {
     }
   });
 
-  const handleConnect = () => {
-    connectMutation.mutate();
-  };
-
-  const handleDisconnect = () => {
-    disconnectMutation.mutate();
-  };
-
-  const handlePlayPause = () => {
-    if (playing) {
-      pauseMutation.mutate();
-    } else {
-      playMutation.mutate(selectedPlaylist);
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      searchMusic();
     }
+  };
+
+  const handlePlay = (uri, isTrack) => {
+    setSelectedItem(uri);
+    playMutation.mutate({ uri, isTrack });
   };
 
   return (
@@ -105,7 +122,7 @@ export default function SpotifyMusicPanel() {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Music className="w-5 h-5 text-green-600" />
-            Music for Focus
+            Spotify Music Library
           </CardTitle>
           <div className={`flex items-center gap-2 text-sm ${user?.spotify_connected ? 'text-green-600' : 'text-gray-400'}`}>
             {user?.spotify_connected ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
@@ -123,89 +140,116 @@ export default function SpotifyMusicPanel() {
                 </div>
                 <div>
                   <p className="font-medium">Spotify</p>
-                  <p className="text-sm text-gray-500">Focus music for routines</p>
+                  <p className="text-sm text-gray-500">Connect to browse your music</p>
                 </div>
               </div>
               <Button 
-                onClick={handleConnect}
+                onClick={() => connectMutation.mutate()}
                 disabled={connectMutation.isPending}
                 className="bg-green-600 hover:bg-green-700"
               >
                 {connectMutation.isPending ? "Connecting..." : "Connect"}
               </Button>
             </div>
-            <p className="text-xs text-gray-500">
-              Connect your Spotify account to play music during routines
-            </p>
           </div>
         ) : (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-6 h-6 text-green-600" />
-                <div>
-                  <p className="font-medium">Spotify Connected</p>
-                  <p className="text-xs text-gray-600">Choose a playlist to play</p>
-                </div>
-              </div>
-              <Button 
-                onClick={handleDisconnect}
-                variant="outline"
-                size="sm"
-              >
+          <>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">Browse Your Music</p>
+              <Button onClick={() => disconnectMutation.mutate()} variant="outline" size="sm">
                 Disconnect
               </Button>
             </div>
 
-            {playlists.length > 0 && (
-              <>
-                <Select value={selectedPlaylist} onValueChange={setSelectedPlaylist}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a playlist" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {playlists.map((playlist) => (
-                      <SelectItem key={playlist.id} value={playlist.uri}>
-                        {playlist.name} ({playlist.tracks?.total || 0} tracks)
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Search */}
+            <div className="flex gap-2">
+              <Input
+                placeholder="Search tracks or playlists..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              />
+              <Button onClick={handleSearch} size="icon" variant="outline">
+                <Search className="w-4 h-4" />
+              </Button>
+            </div>
 
-                <Button
-                  onClick={handlePlayPause}
-                  disabled={!selectedPlaylist || playMutation.isPending || pauseMutation.isPending}
-                  className="w-full"
-                  variant={playing ? "outline" : "default"}
-                >
-                  {playing ? (
-                    <>
-                      <Pause className="w-4 h-4 mr-2" />
-                      Pause Music
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4 mr-2" />
-                      Play Music
-                    </>
-                  )}
-                </Button>
-              </>
-            )}
+            <Tabs defaultValue="playlists">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="playlists">Playlists</TabsTrigger>
+                <TabsTrigger value="tracks">Top Tracks</TabsTrigger>
+                <TabsTrigger value="search">Search</TabsTrigger>
+              </TabsList>
 
-            {playlists.length === 0 && (
-              <p className="text-xs text-gray-500 text-center py-4">
-                No playlists found. Create playlists in Spotify first.
-              </p>
+              <TabsContent value="playlists" className="space-y-2 max-h-80 overflow-y-auto">
+                {playlists.map((playlist) => (
+                  <div key={playlist.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50">
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">{playlist.name}</p>
+                      <p className="text-xs text-gray-500">{playlist.tracks?.total || 0} tracks</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={selectedItem === playlist.uri && playing ? "outline" : "default"}
+                      onClick={() => handlePlay(playlist.uri, false)}
+                    >
+                      {selectedItem === playlist.uri && playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="tracks" className="space-y-2 max-h-80 overflow-y-auto">
+                {topTracks.map((track) => (
+                  <div key={track.id} className="flex items-center gap-3 p-3 rounded-lg border hover:bg-gray-50">
+                    {track.album?.images?.[2] && (
+                      <img src={track.album.images[2].url} alt="" className="w-10 h-10 rounded" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{track.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{track.artists?.[0]?.name}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={selectedItem === track.uri && playing ? "outline" : "default"}
+                      onClick={() => handlePlay(track.uri, true)}
+                    >
+                      {selectedItem === track.uri && playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="search" className="space-y-2 max-h-80 overflow-y-auto">
+                {searchResults?.tracks?.items?.map((track) => (
+                  <div key={track.id} className="flex items-center gap-3 p-3 rounded-lg border hover:bg-gray-50">
+                    {track.album?.images?.[2] && (
+                      <img src={track.album.images[2].url} alt="" className="w-10 h-10 rounded" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{track.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{track.artists?.[0]?.name}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={selectedItem === track.uri && playing ? "outline" : "default"}
+                      onClick={() => handlePlay(track.uri, true)}
+                    >
+                      {selectedItem === track.uri && playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                ))}
+              </TabsContent>
+            </Tabs>
+
+            {playing && (
+              <Button onClick={() => pauseMutation.mutate()} variant="outline" className="w-full">
+                <Pause className="w-4 h-4 mr-2" />
+                Pause Playback
+              </Button>
             )}
-          </div>
+          </>
         )}
-
-        <div className="text-xs text-gray-500 space-y-1">
-          <p>• Play your playlists during routines</p>
-          <p>• Music boosts focus and motivation</p>
-          <p>• Auto-pause when routine completes</p>
-        </div>
       </CardContent>
     </Card>
   );

@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action, playlistUri, deviceId } = await req.json();
+    const { action, playlistUri, trackUris, deviceId } = await req.json();
 
     // Get Spotify access token from app connector
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('spotify');
@@ -24,7 +24,6 @@ Deno.serve(async (req) => {
       
       const profile = await response.json();
       
-      // Update user with Spotify info
       await base44.asServiceRole.entities.User.update(user.id, {
         spotify_connected: true,
         spotify_user_id: profile.id
@@ -45,6 +44,43 @@ Deno.serve(async (req) => {
       return Response.json({ playlists: data.items });
     }
 
+    // Get user's saved tracks (library)
+    if (action === 'getSavedTracks') {
+      const response = await fetch('https://api.spotify.com/v1/me/tracks?limit=50', {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      
+      if (!response.ok) throw new Error('Failed to get saved tracks');
+      
+      const data = await response.json();
+      return Response.json({ tracks: data.items });
+    }
+
+    // Get user's top tracks
+    if (action === 'getTopTracks') {
+      const response = await fetch('https://api.spotify.com/v1/me/top/tracks?limit=20&time_range=short_term', {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      
+      if (!response.ok) throw new Error('Failed to get top tracks');
+      
+      const data = await response.json();
+      return Response.json({ tracks: data.items });
+    }
+
+    // Search tracks
+    if (action === 'search') {
+      const { query } = await req.json();
+      const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track,playlist&limit=20`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      
+      if (!response.ok) throw new Error('Failed to search');
+      
+      const data = await response.json();
+      return Response.json(data);
+    }
+
     // Get available devices
     if (action === 'getDevices') {
       const response = await fetch('https://api.spotify.com/v1/me/player/devices', {
@@ -57,9 +93,15 @@ Deno.serve(async (req) => {
       return Response.json({ devices: data.devices });
     }
 
-    // Play playlist
+    // Play playlist or tracks
     if (action === 'play') {
-      const body = playlistUri ? { context_uri: playlistUri } : {};
+      const body = {};
+      if (playlistUri) {
+        body.context_uri = playlistUri;
+      } else if (trackUris) {
+        body.uris = trackUris;
+      }
+      
       const url = deviceId 
         ? `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`
         : 'https://api.spotify.com/v1/me/player/play';
@@ -73,7 +115,6 @@ Deno.serve(async (req) => {
         body: JSON.stringify(body)
       });
       
-      // 204 means success
       if (response.status !== 204 && !response.ok) {
         throw new Error('Failed to play music');
       }

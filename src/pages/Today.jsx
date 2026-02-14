@@ -46,6 +46,16 @@ export default function Today() {
 
   const completeMutation = useMutation({
     mutationFn: async ({ item, timeSpent, type }) => {
+      // Auto-pause Spotify when completing
+      if (user?.spotify_connected && musicPlaying) {
+        try {
+          await base44.functions.invoke('spotifyAuth', { action: 'pause' });
+          setMusicPlaying(false);
+        } catch (error) {
+          console.error('Failed to pause music:', error);
+        }
+      }
+
       await base44.entities.CompletionLog.create({
         routine_id: type === 'routine' ? item.id : undefined,
         goal_id: type === 'goal' ? item.id : undefined,
@@ -81,7 +91,7 @@ export default function Today() {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
       const xp = selectedItem?.type === 'routine' ? 10 : 50;
-      toast.success(`Great job! +${xp} XP +2 💎`);
+      toast.success(`Great job! +${xp} XP +2 💎 | Music paused`);
     }
   });
 
@@ -91,20 +101,9 @@ export default function Today() {
     );
   };
 
-  const handleComplete = async (item, type) => {
+  const handleComplete = (item, type) => {
     setSelectedItem({ item, type });
     setShowTimer(true);
-    
-    // Auto-pause Spotify if connected
-    if (user?.spotify_connected && musicPlaying) {
-      try {
-        await base44.functions.invoke('spotifyAuth', { action: 'pause' });
-        setMusicPlaying(false);
-        toast.success('Music paused');
-      } catch (error) {
-        console.error('Failed to pause music:', error);
-      }
-    }
   };
 
   const handlePlayMusic = async () => {
