@@ -66,9 +66,35 @@ export default function Layout({ children, currentPageName }) {
     retry: false
   });
 
+  const { data: achievements = [] } = useQuery({
+    queryKey: ['achievements'],
+    queryFn: () => base44.entities.Achievement.list(),
+    retry: false
+  });
+
   const theme = themeColors[user?.theme_primary || 'purple'];
   const bgClass = backgrounds[user?.theme_background || 'gradient'];
   const AvatarIcon = avatarIcons[user?.avatar || 'user'];
+  
+  const currentLevel = Math.floor(Math.sqrt((user?.total_xp || 0) / 100));
+  
+  const getHighestBadge = () => {
+    if (!achievements.length) return null;
+    const order = ['diamond', 'platinum', 'gold', 'silver', 'bronze'];
+    for (const badge of order) {
+      if (achievements.some(a => a.badge === badge)) return badge;
+    }
+    return null;
+  };
+  
+  const highestBadge = getHighestBadge();
+  const badgeColors = {
+    bronze: '🥉',
+    silver: '🥈',
+    gold: '🥇',
+    platinum: '💎',
+    diamond: '👑'
+  };
 
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', tooltip: 'Overview & Stats' },
@@ -99,9 +125,21 @@ export default function Layout({ children, currentPageName }) {
             </div>
             <div className="flex items-center gap-3">
               {user?.full_name && (
-                <span className="hidden md:block text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 px-3 py-1 rounded-full">
-                  {user.full_name}
-                </span>
+                <div className="hidden md:flex items-center gap-2">
+                  <span className="text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 px-3 py-1 rounded-full">
+                    {user.full_name}
+                  </span>
+                  {currentLevel > 0 && (
+                    <span className="text-sm font-bold text-purple-600 bg-white px-2 py-1 rounded-full">
+                      Lv.{currentLevel}
+                    </span>
+                  )}
+                  {highestBadge && (
+                    <span className="text-lg" title={`${highestBadge} badge`}>
+                      {badgeColors[highestBadge]}
+                    </span>
+                  )}
+                </div>
               )}
               {user?.avatar_url ? (
                 <Link to="/Profile" className="relative">
@@ -110,10 +148,20 @@ export default function Layout({ children, currentPageName }) {
                     alt="Profile" 
                     className="w-10 h-10 rounded-full object-cover border-2 border-purple-500 hover:border-purple-600 transition-all"
                   />
+                  {highestBadge && (
+                    <span className="absolute -bottom-1 -right-1 text-sm">
+                      {badgeColors[highestBadge]}
+                    </span>
+                  )}
                 </Link>
               ) : AvatarIcon && (
-                <Link to="/Profile" className={`w-10 h-10 ${theme.bg} rounded-full flex items-center justify-center hover:opacity-80 transition-opacity`}>
+                <Link to="/Profile" className={`relative w-10 h-10 ${theme.bg} rounded-full flex items-center justify-center hover:opacity-80 transition-opacity`}>
                   <AvatarIcon className="w-6 h-6 text-white" />
+                  {highestBadge && (
+                    <span className="absolute -bottom-1 -right-1 text-sm">
+                      {badgeColors[highestBadge]}
+                    </span>
+                  )}
                 </Link>
               )}
             </div>

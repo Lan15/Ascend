@@ -18,14 +18,26 @@ import GoalsWidget from "../components/dashboard/widgets/GoalsWidget";
 import RecentCompletionsWidget from "../components/dashboard/widgets/RecentCompletionsWidget";
 import AIInsightsWidget from "../components/dashboard/widgets/AIInsightsWidget";
 import TaskProgressWidget from "../components/dashboard/widgets/TaskProgressWidget";
+import WorldClockWidget from "../components/dashboard/widgets/WorldClockWidget";
+import QuickActionsWidget from "../components/dashboard/widgets/QuickActionsWidget";
+import ActiveGoalsWidget from "../components/dashboard/widgets/ActiveGoalsWidget";
+import AchievementsWidget from "../components/dashboard/widgets/AchievementsWidget";
+import GemsWidget from "../components/dashboard/widgets/GemsWidget";
+import CalendarWidget from "../components/dashboard/widgets/CalendarWidget";
 
 const AVAILABLE_WIDGETS = [
-  { id: 'streak', name: 'Streak', component: StreakWidget },
-  { id: 'xp', name: 'Level & XP', component: XPWidget },
-  { id: 'goals', name: 'Goals Progress', component: GoalsWidget },
-  { id: 'recent', name: 'Recent Completions', component: RecentCompletionsWidget },
-  { id: 'ai', name: 'AI Insights', component: AIInsightsWidget },
-  { id: 'tasks', name: 'Task Progress', component: TaskProgressWidget }
+  { id: 'streak', name: 'Streak', component: StreakWidget, defaultSpan: 1 },
+  { id: 'xp', name: 'Level & XP', component: XPWidget, defaultSpan: 1 },
+  { id: 'goals', name: 'Goals Progress', component: GoalsWidget, defaultSpan: 1 },
+  { id: 'recent', name: 'Recent Completions', component: RecentCompletionsWidget, defaultSpan: 1 },
+  { id: 'ai', name: 'AI Insights', component: AIInsightsWidget, defaultSpan: 2 },
+  { id: 'tasks', name: 'Task Progress', component: TaskProgressWidget, defaultSpan: 1 },
+  { id: 'worldclock', name: 'World Clock', component: WorldClockWidget, defaultSpan: 1 },
+  { id: 'quickactions', name: 'Quick Actions', component: QuickActionsWidget, defaultSpan: 1 },
+  { id: 'activegoals', name: 'Active Goals', component: ActiveGoalsWidget, defaultSpan: 1 },
+  { id: 'achievements', name: 'Achievements', component: AchievementsWidget, defaultSpan: 1 },
+  { id: 'gems', name: 'Your Gems', component: GemsWidget, defaultSpan: 1 },
+  { id: 'calendar', name: 'Calendar', component: CalendarWidget, defaultSpan: 2 }
 ];
 
 const DEFAULT_WIDGETS = ['streak', 'xp', 'goals', 'tasks', 'recent', 'ai'];
@@ -34,6 +46,7 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [widgets, setWidgets] = useState(DEFAULT_WIDGETS);
+  const [widgetSpans, setWidgetSpans] = useState({});
   const [layouts, setLayouts] = useState([]);
   const [currentLayoutName, setCurrentLayoutName] = useState('Default');
   const [newLayoutName, setNewLayoutName] = useState('');
@@ -59,6 +72,11 @@ export default function Dashboard() {
     queryFn: () => base44.entities.CompletionLog.list('-created_date', 50)
   });
 
+  const { data: achievements = [] } = useQuery({
+    queryKey: ['achievements'],
+    queryFn: () => base44.entities.Achievement.list('-created_date', 20)
+  });
+
   useEffect(() => {
     if (user?.dashboard_layouts) {
       setLayouts(user.dashboard_layouts);
@@ -67,6 +85,7 @@ export default function Dashboard() {
       );
       if (activeLayout) {
         setWidgets(activeLayout.widgets);
+        setWidgetSpans(activeLayout.widgetSpans || {});
         setCurrentLayoutName(activeLayout.name);
       }
     }
@@ -98,7 +117,7 @@ export default function Dashboard() {
 
   const saveCurrentLayout = () => {
     const updatedLayouts = layouts.filter(l => l.name !== currentLayoutName);
-    updatedLayouts.push({ name: currentLayoutName, widgets });
+    updatedLayouts.push({ name: currentLayoutName, widgets, widgetSpans });
     
     updateUserMutation.mutate({
       dashboard_layouts: updatedLayouts,
@@ -114,7 +133,7 @@ export default function Dashboard() {
       return;
     }
 
-    const updatedLayouts = [...layouts, { name: newLayoutName, widgets }];
+    const updatedLayouts = [...layouts, { name: newLayoutName, widgets, widgetSpans }];
     updateUserMutation.mutate({
       dashboard_layouts: updatedLayouts,
       active_dashboard_layout: newLayoutName
@@ -131,9 +150,14 @@ export default function Dashboard() {
     const layout = layouts.find(l => l.name === layoutName);
     if (layout) {
       setWidgets(layout.widgets);
+      setWidgetSpans(layout.widgetSpans || {});
       setCurrentLayoutName(layoutName);
       updateUserMutation.mutate({ active_dashboard_layout: layoutName });
     }
+  };
+
+  const updateWidgetSpan = (widgetId, span) => {
+    setWidgetSpans(prev => ({ ...prev, [widgetId]: span }));
   };
 
   const deleteLayout = (layoutName) => {
@@ -152,7 +176,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6">
       <div className="max-w-7xl mx-auto">
         <Mascot pageContext="dashboard" />
         
@@ -194,15 +218,28 @@ export default function Dashboard() {
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-600 mb-2">Select widgets to display:</p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <div className="space-y-2">
                     {AVAILABLE_WIDGETS.map(widget => (
-                      <label key={widget.id} className="flex items-center gap-2 cursor-pointer">
-                        <Checkbox
-                          checked={widgets.includes(widget.id)}
-                          onCheckedChange={() => toggleWidget(widget.id)}
-                        />
-                        <span className="text-sm">{widget.name}</span>
-                      </label>
+                      <div key={widget.id} className="flex items-center justify-between">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <Checkbox
+                            checked={widgets.includes(widget.id)}
+                            onCheckedChange={() => toggleWidget(widget.id)}
+                          />
+                          <span className="text-sm">{widget.name}</span>
+                        </label>
+                        {widgets.includes(widget.id) && (
+                          <select
+                            value={widgetSpans[widget.id] || widget.defaultSpan}
+                            onChange={(e) => updateWidgetSpan(widget.id, parseInt(e.target.value))}
+                            className="text-xs px-2 py-1 border rounded"
+                          >
+                            <option value={1}>1 column</option>
+                            <option value={2}>2 columns</option>
+                            <option value={3}>3 columns</option>
+                          </select>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -263,6 +300,8 @@ export default function Dashboard() {
                   if (!widgetConfig) return null;
                   
                   const WidgetComponent = widgetConfig.component;
+                  const span = widgetSpans[widgetId] || widgetConfig.defaultSpan;
+                  const colSpanClass = span === 3 ? 'lg:col-span-3' : span === 2 ? 'lg:col-span-2' : '';
 
                   return (
                     <Draggable key={widgetId} draggableId={widgetId} index={index} isDragDisabled={!isCustomizing}>
@@ -270,7 +309,7 @@ export default function Dashboard() {
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          className={`${snapshot.isDragging ? 'opacity-50' : ''}`}
+                          className={`${snapshot.isDragging ? 'opacity-50' : ''} ${colSpanClass}`}
                         >
                           <div className="relative group">
                             {isCustomizing && (
@@ -286,6 +325,7 @@ export default function Dashboard() {
                               routines={routines}
                               goals={goals}
                               completions={completions}
+                              achievements={achievements}
                             />
                           </div>
                         </div>
