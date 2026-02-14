@@ -199,19 +199,19 @@ export default function Profile() {
                 Share your achievements and progress with friends on social media
               </p>
               <ShareProgress
-                isOpen={showShareDialog}
-                onClose={() => setShowShareDialog(false)}
-                progressData={{
-                  level: Math.floor(Math.sqrt((user?.total_xp || 0) / 100)),
-                  xp: user?.total_xp || 0,
+                stats={{
                   streak: user?.current_streak || 0,
-                  longestStreak: user?.longest_streak || 0
+                  achievements: 0,
+                  completions: 0,
+                  timeSpent: 0
                 }}
+                trigger={
+                  <Button variant="outline" className="w-full">
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Share Progress
+                  </Button>
+                }
               />
-              <Button onClick={() => setShowShareDialog(true)} variant="outline" className="w-full">
-                <Share2 className="w-4 h-4 mr-2" />
-                Share Progress
-              </Button>
             </CardContent>
           </Card>
         </div>
