@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CheckCircle2, Circle, Timer, Trophy, Sparkles } from "lucide-react";
+import { CheckCircle2, Circle, Timer, Trophy, Sparkles, Music, Pause } from "lucide-react";
 import { format } from 'date-fns';
 import { toast } from "sonner";
 import ActivityTimer from "../components/timer/ActivityTimer";
@@ -20,6 +20,7 @@ export default function Today() {
   const [learning, setLearning] = useState('');
   const [notes, setNotes] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false);
   
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -90,9 +91,36 @@ export default function Today() {
     );
   };
 
-  const handleComplete = (item, type) => {
+  const handleComplete = async (item, type) => {
     setSelectedItem({ item, type });
     setShowTimer(true);
+    
+    // Auto-pause Spotify if connected
+    if (user?.spotify_connected && musicPlaying) {
+      try {
+        await base44.functions.invoke('spotifyAuth', { action: 'pause' });
+        setMusicPlaying(false);
+        toast.success('Music paused');
+      } catch (error) {
+        console.error('Failed to pause music:', error);
+      }
+    }
+  };
+
+  const handlePlayMusic = async () => {
+    try {
+      if (musicPlaying) {
+        await base44.functions.invoke('spotifyAuth', { action: 'pause' });
+        setMusicPlaying(false);
+        toast.success('Music paused');
+      } else {
+        await base44.functions.invoke('spotifyAuth', { action: 'play' });
+        setMusicPlaying(true);
+        toast.success('Music playing');
+      }
+    } catch (error) {
+      toast.error('Failed to control music. Make sure Spotify is open on your device.');
+    }
   };
 
   const handleTimerComplete = (timeSpent) => {
@@ -114,11 +142,33 @@ export default function Today() {
         <ConfettiEffect trigger={showConfetti} />
         
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Today's Quest 🎯
-          </h1>
-          <p className="text-gray-600 mt-2">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Today's Quest 🎯
+            </h1>
+            <p className="text-gray-600 mt-2">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
+          </div>
+          
+          {user?.spotify_connected && (
+            <Button
+              onClick={handlePlayMusic}
+              variant="outline"
+              className="gap-2"
+            >
+              {musicPlaying ? (
+                <>
+                  <Pause className="w-4 h-4" />
+                  Pause Music
+                </>
+              ) : (
+                <>
+                  <Music className="w-4 h-4" />
+                  Play Music
+                </>
+              )}
+            </Button>
+          )}
         </div>
 
         {/* Progress Bar */}
