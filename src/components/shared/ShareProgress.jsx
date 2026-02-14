@@ -48,6 +48,13 @@ export default function ShareProgress({ trigger, stats }) {
       case 'twitter':
         url = `https://twitter.com/intent/tweet?text=${text}`;
         break;
+      case 'whatsapp':
+        url = `https://wa.me/?text=${text}`;
+        break;
+      case 'instagram':
+        navigator.clipboard.writeText(shareText);
+        toast.info('Text copied! Open Instagram to share');
+        return;
     }
     
     if (url) {
@@ -99,6 +106,20 @@ export default function ShareProgress({ trigger, stats }) {
             </Button>
             
             <div className="grid grid-cols-2 gap-2">
+              <Button 
+                onClick={() => shareToSocial('whatsapp')} 
+                variant="outline"
+                className="bg-green-500 text-white hover:bg-green-600"
+              >
+                WhatsApp
+              </Button>
+              <Button 
+                onClick={() => shareToSocial('instagram')} 
+                variant="outline"
+                style={{ background: 'linear-gradient(45deg, #F58529, #DD2A7B, #8134AF)', color: 'white' }}
+              >
+                Instagram
+              </Button>
               <Button onClick={() => shareToSocial('facebook')} variant="outline">
                 <Facebook className="w-4 h-4 mr-2" />
                 Facebook

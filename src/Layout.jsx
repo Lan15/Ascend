@@ -95,19 +95,26 @@ export default function Layout({ children, currentPageName }) {
                 Routine Quest
               </h1>
             </div>
-            {user?.avatar_url ? (
-              <Link to="/Profile" className="relative">
-                <img 
-                  src={user.avatar_url} 
-                  alt="Profile" 
-                  className="w-10 h-10 rounded-full object-cover border-2 border-purple-500 hover:border-purple-600 transition-all"
-                />
-              </Link>
-            ) : AvatarIcon && (
-              <Link to="/Profile" className={`w-10 h-10 ${theme.bg} rounded-full flex items-center justify-center hover:opacity-80 transition-opacity`}>
-                <AvatarIcon className="w-6 h-6 text-white" />
-              </Link>
-            )}
+            <div className="flex items-center gap-3">
+              {user?.full_name && (
+                <span className="hidden md:block text-sm font-medium text-gray-700">
+                  {user.full_name}
+                </span>
+              )}
+              {user?.avatar_url ? (
+                <Link to="/Profile" className="relative">
+                  <img 
+                    src={user.avatar_url} 
+                    alt="Profile" 
+                    className="w-10 h-10 rounded-full object-cover border-2 border-purple-500 hover:border-purple-600 transition-all"
+                  />
+                </Link>
+              ) : AvatarIcon && (
+                <Link to="/Profile" className={`w-10 h-10 ${theme.bg} rounded-full flex items-center justify-center hover:opacity-80 transition-opacity`}>
+                  <AvatarIcon className="w-6 h-6 text-white" />
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </nav>
