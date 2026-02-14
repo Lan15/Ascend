@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Share2, Download, Facebook, Linkedin, Instagram } from 'lucide-react';
+import { Share2, Download, Facebook, Linkedin, Instagram, Trophy } from 'lucide-react';
 import { toast } from "sonner";
 import html2canvas from 'html2canvas';
 
@@ -32,7 +32,18 @@ export default function ShareProgress({ trigger, stats }) {
     }
   };
 
-  const shareText = `🎯 My Routine Quest Progress!\n\n⚡ ${stats.streak || 0} day streak\n🎖️ ${stats.achievements || 0} achievements unlocked\n✅ ${stats.completions || 0} tasks completed\n⏱️ ${stats.timeSpent || 0} hours invested\n\nJoin me on my productivity journey! #RoutineQuest #ProductivityGoals`;
+  const getBadgeEmoji = (badge) => {
+    const badges = {
+      bronze: '🥉',
+      silver: '🥈',
+      gold: '🥇',
+      platinum: '💎',
+      diamond: '👑'
+    };
+    return badges[badge] || '🏅';
+  };
+
+  const shareText = `🎯 My Routine Quest Progress!\n\n${stats.badge ? getBadgeEmoji(stats.badge) + ' ' + stats.badge.charAt(0).toUpperCase() + stats.badge.slice(1) + ' Badge\n' : ''}⭐ Level ${stats.level || 0}\n⚡ ${stats.streak || 0} day streak\n📋 ${stats.routines || 0} routines | 🎯 ${stats.goals || 0} goals\n✅ ${stats.completions || 0} tasks completed\n${stats.consistency ? '📊 ' + stats.consistency + '% consistency\n' : ''}⏱️ ${stats.timeSpent || 0} hours invested\n\nJoin me on my productivity journey! #RoutineQuest #ProductivityGoals`;
 
   const shareToSocial = (platform) => {
     let url = '';
@@ -76,20 +87,48 @@ export default function ShareProgress({ trigger, stats }) {
 
           {/* Preview Card */}
           <div id="share-card" className="p-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl text-white">
-            <h2 className="text-2xl font-bold mb-4">Routine Quest Progress 🎯</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold">Routine Quest Progress 🎯</h2>
+              {stats.badge && (
+                <div className="text-3xl">
+                  {getBadgeEmoji(stats.badge)}
+                </div>
+              )}
+            </div>
+            
+            <div className="bg-white/20 rounded-lg p-3 mb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-3xl font-bold">Level {stats.level || 0}</div>
+                  <div className="text-sm opacity-90">{stats.badge ? stats.badge.charAt(0).toUpperCase() + stats.badge.slice(1) : 'Beginner'} Badge</div>
+                </div>
+                <Trophy className="w-12 h-12 opacity-80" />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Streak:</span>
                 <span className="font-bold">{stats.streak || 0} days 🔥</span>
               </div>
               <div className="flex justify-between">
-                <span>Achievements:</span>
-                <span className="font-bold">{stats.achievements || 0} 🏆</span>
+                <span>Routines:</span>
+                <span className="font-bold">{stats.routines || 0} 📋</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Goals:</span>
+                <span className="font-bold">{stats.goals || 0} 🎯</span>
               </div>
               <div className="flex justify-between">
                 <span>Completions:</span>
                 <span className="font-bold">{stats.completions || 0} ✅</span>
               </div>
+              {stats.consistency !== undefined && (
+                <div className="flex justify-between">
+                  <span>Consistency:</span>
+                  <span className="font-bold">{stats.consistency}% 📊</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span>Time Invested:</span>
                 <span className="font-bold">{stats.timeSpent || 0}h ⏱️</span>
