@@ -21,6 +21,7 @@ export default function Routines() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    tracking_type: 'time_tracked',
     target_duration_minutes: '',
     category: 'personal',
     active: true
@@ -63,6 +64,7 @@ export default function Routines() {
     setFormData({
       title: '',
       description: '',
+      tracking_type: 'time_tracked',
       target_duration_minutes: '',
       category: 'personal',
       active: true
@@ -89,6 +91,7 @@ export default function Routines() {
     setFormData({
       title: routine.title,
       description: routine.description || '',
+      tracking_type: routine.tracking_type || 'time_tracked',
       target_duration_minutes: routine.target_duration_minutes || '',
       category: routine.category || 'personal',
       active: routine.active ?? true
@@ -164,9 +167,14 @@ export default function Routines() {
                     {routine.description && (
                       <p className="text-gray-600 mb-2">{routine.description}</p>
                     )}
-                    {routine.target_duration_minutes && (
-                      <p className="text-sm text-gray-500">Target: {routine.target_duration_minutes} minutes</p>
-                    )}
+                    <div className="flex gap-3 items-center text-sm text-gray-500">
+                      {routine.tracking_type === 'time_tracked' && routine.target_duration_minutes && (
+                        <span>Target: {routine.target_duration_minutes} minutes</span>
+                      )}
+                      <span className="px-2 py-1 rounded-full text-xs bg-gray-100">
+                        {routine.tracking_type === 'time_tracked' ? '⏱️ Time tracked' : '✓ Completion only'}
+                      </span>
+                    </div>
                   </div>
                   
                   <div className="flex gap-2 items-center">
@@ -265,15 +273,30 @@ export default function Routines() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Target Duration (minutes)</label>
-                <Input
-                  type="number"
-                  value={formData.target_duration_minutes}
-                  onChange={(e) => setFormData({ ...formData, target_duration_minutes: e.target.value })}
-                  placeholder="30"
-                  min="1"
-                />
+                <label className="block text-sm font-medium mb-2">Tracking Type</label>
+                <Select value={formData.tracking_type} onValueChange={(value) => setFormData({ ...formData, tracking_type: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="time_tracked">⏱️ Time tracked (with timer)</SelectItem>
+                    <SelectItem value="completion_only">✓ Completion only (done/not done)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+
+              {formData.tracking_type === 'time_tracked' && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">Target Duration (minutes)</label>
+                  <Input
+                    type="number"
+                    value={formData.target_duration_minutes}
+                    onChange={(e) => setFormData({ ...formData, target_duration_minutes: e.target.value })}
+                    placeholder="30"
+                    min="1"
+                  />
+                </div>
+              )}
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>

@@ -108,8 +108,17 @@ export default function Today() {
   };
 
   const handleComplete = (item, type) => {
-    setSelectedItem({ item, type });
-    setShowTimer(true);
+    // For completion-only items, complete immediately without timer
+    if (item.tracking_type === 'completion_only') {
+      completeMutation.mutate({
+        item,
+        timeSpent: 0,
+        type
+      });
+    } else {
+      setSelectedItem({ item, type });
+      setShowTimer(true);
+    }
   };
 
   const handlePlayMusic = async () => {
@@ -235,10 +244,16 @@ export default function Today() {
                       {routine.description && (
                         <p className="text-sm text-gray-500">{routine.description}</p>
                       )}
-                      {routine.target_duration_minutes && (
+                      {routine.tracking_type === 'time_tracked' && routine.target_duration_minutes && (
                         <p className="text-xs text-gray-400 flex items-center gap-1 mt-1">
                           <Timer className="w-3 h-3" />
                           Target: {routine.target_duration_minutes} minutes
+                        </p>
+                      )}
+                      {routine.tracking_type === 'completion_only' && (
+                        <p className="text-xs text-gray-400 flex items-center gap-1 mt-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Mark as complete
                         </p>
                       )}
                     </div>

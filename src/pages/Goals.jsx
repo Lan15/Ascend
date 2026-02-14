@@ -24,6 +24,7 @@ export default function Goals() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    tracking_type: 'completion_only',
     target_duration_minutes: '',
     category: 'personal',
     deadline: '',
@@ -71,6 +72,7 @@ export default function Goals() {
     setFormData({
       title: '',
       description: '',
+      tracking_type: 'completion_only',
       target_duration_minutes: '',
       category: 'personal',
       deadline: '',
@@ -101,6 +103,7 @@ export default function Goals() {
     setFormData({
       title: goal.title,
       description: goal.description || '',
+      tracking_type: goal.tracking_type || 'completion_only',
       target_duration_minutes: goal.target_duration_minutes || '',
       category: goal.category || 'personal',
       deadline: goal.deadline || '',
@@ -157,10 +160,13 @@ export default function Goals() {
             {goal.description && (
               <p className="text-gray-600 mb-2">{goal.description}</p>
             )}
-            <div className="flex gap-4 text-sm text-gray-500 flex-wrap">
-              {goal.target_duration_minutes && (
+            <div className="flex gap-4 text-sm text-gray-500 flex-wrap items-center">
+              {goal.tracking_type === 'time_tracked' && goal.target_duration_minutes && (
                 <span>Target: {goal.target_duration_minutes} minutes</span>
               )}
+              <span className="px-2 py-1 rounded-full text-xs bg-gray-100">
+                {goal.tracking_type === 'time_tracked' ? '⏱️ Time tracked' : '✓ Done/Not done'}
+              </span>
               {goal.deadline && (
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
@@ -384,15 +390,30 @@ export default function Goals() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Target Duration (minutes)</label>
-                <Input
-                  type="number"
-                  value={formData.target_duration_minutes}
-                  onChange={(e) => setFormData({ ...formData, target_duration_minutes: e.target.value })}
-                  placeholder="60"
-                  min="1"
-                />
+                <label className="block text-sm font-medium mb-2">Tracking Type</label>
+                <Select value={formData.tracking_type} onValueChange={(value) => setFormData({ ...formData, tracking_type: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="completion_only">✓ Completion only (done/not done)</SelectItem>
+                    <SelectItem value="time_tracked">⏱️ Time tracked (with timer)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+
+              {formData.tracking_type === 'time_tracked' && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">Target Duration (minutes)</label>
+                  <Input
+                    type="number"
+                    value={formData.target_duration_minutes}
+                    onChange={(e) => setFormData({ ...formData, target_duration_minutes: e.target.value })}
+                    placeholder="60"
+                    min="1"
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium mb-2">Deadline</label>
