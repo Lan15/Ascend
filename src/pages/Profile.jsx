@@ -30,6 +30,26 @@ export default function Profile() {
     staleTime: 0
   });
 
+  const { data: routines = [] } = useQuery({
+    queryKey: ['routines'],
+    queryFn: () => base44.entities.Routine.list()
+  });
+
+  const { data: goals = [] } = useQuery({
+    queryKey: ['goals'],
+    queryFn: () => base44.entities.Goal.list()
+  });
+
+  const { data: completions = [] } = useQuery({
+    queryKey: ['completions'],
+    queryFn: () => base44.entities.CompletionLog.list('-created_date', 100)
+  });
+
+  const { data: achievements = [] } = useQuery({
+    queryKey: ['achievements'],
+    queryFn: () => base44.entities.Achievement.list()
+  });
+
   const [avatar, setAvatar] = useState('user');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [themePrimary, setThemePrimary] = useState('purple');
@@ -200,10 +220,20 @@ export default function Profile() {
               </p>
               <ShareProgress
                 stats={{
+                  level: Math.floor(Math.sqrt((user?.total_xp || 0) / 100)),
+                  badge: achievements.length > 0 ? achievements.reduce((highest, a) => {
+                    const order = ['bronze', 'silver', 'gold', 'platinum', 'diamond'];
+                    return order.indexOf(a.badge) > order.indexOf(highest) ? a.badge : highest;
+                  }, 'bronze') : null,
                   streak: user?.current_streak || 0,
-                  achievements: 0,
-                  completions: 0,
-                  timeSpent: 0
+                  routines: routines.filter(r => r.active).length,
+                  goals: goals.filter(g => !g.completed && !g.parent_goal_id).length,
+                  achievements: achievements.length,
+                  completions: completions.length,
+                  consistency: completions.length > 0 && routines.length > 0 
+                    ? Math.round((completions.filter(c => c.routine_id).length / (routines.filter(r => r.active).length * 30)) * 100)
+                    : 0,
+                  timeSpent: Math.round(completions.reduce((sum, c) => sum + (c.time_spent_minutes || 0), 0) / 60)
                 }}
                 trigger={
                   <Button variant="outline" className="w-full">
