@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function XPProgressBar({ totalXp = 0, compact = false }) {
   // Calculate level and progress (100 XP per level, exponential growth)
   const calculateLevel = (xp) => {
-    return Math.floor(Math.sqrt(xp / 100)) + 1;
+    return Math.floor(Math.sqrt(xp / 100));
   };
 
   const level = calculateLevel(totalXp);

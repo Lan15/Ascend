@@ -3,10 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ListChecks } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 
-export default function TaskProgressWidget({ completions, routines }) {
+export default function TaskProgressWidget({ completions, routines, goals }) {
   const today = format(new Date(), 'yyyy-MM-dd');
-  const todayCompletions = completions.filter(c => c.completion_date === today).length;
+  const todayCompletions = completions.filter(c => c.completion_date === today);
+  
+  const routineCompletionsToday = todayCompletions.filter(c => c.routine_id).length;
+  const goalCompletionsToday = todayCompletions.filter(c => c.goal_id).length;
+  
   const activeRoutines = routines.filter(r => r.active).length;
+  const activeGoals = goals.filter(g => !g.completed && !g.parent_goal_id).length;
 
   const last7Days = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd'));
   const weeklyCompletions = completions.filter(c => last7Days.includes(c.completion_date)).length;
@@ -21,11 +26,19 @@ export default function TaskProgressWidget({ completions, routines }) {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          <div>
-            <div className="text-3xl font-bold text-indigo-600">
-              {todayCompletions}/{activeRoutines}
+          <div className="space-y-2">
+            <div>
+              <div className="text-2xl font-bold text-indigo-600">
+                Routines: {routineCompletionsToday}/{activeRoutines}
+              </div>
+              <p className="text-xs text-gray-500">completed today</p>
             </div>
-            <p className="text-xs text-gray-500">completed today</p>
+            <div>
+              <div className="text-2xl font-bold text-purple-600">
+                Goals: {goalCompletionsToday}/{activeGoals}
+              </div>
+              <p className="text-xs text-gray-500">completed today</p>
+            </div>
           </div>
           <div className="pt-2 border-t">
             <div className="text-lg font-semibold text-gray-700">
