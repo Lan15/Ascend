@@ -115,7 +115,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Welcome Back, Champion! 🎮
+                Welcome back, {user?.full_name?.split(' ')[0] || 'Champion'}! 🎮
               </h1>
               <p className="text-gray-600 mt-2">Let's level up your productivity today</p>
             </div>
