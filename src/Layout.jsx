@@ -78,6 +78,17 @@ export default function Layout({ children, currentPageName }) {
   
   const currentLevel = Math.floor(Math.sqrt((user?.total_xp || 0) / 100));
   
+  const getLevelRank = (level) => {
+    if (level === 0) return 'Beginner';
+    if (level < 5) return 'Novice';
+    if (level < 10) return 'Apprentice';
+    if (level < 20) return 'Expert';
+    if (level < 50) return 'Master';
+    return 'Legend';
+  };
+  
+  const levelRank = getLevelRank(currentLevel);
+  
   const getHighestBadge = () => {
     if (!achievements.length) return null;
     const order = ['diamond', 'platinum', 'gold', 'silver', 'bronze'];
@@ -126,14 +137,14 @@ export default function Layout({ children, currentPageName }) {
             <div className="flex items-center gap-2">
               {user?.full_name && (
                 <>
-                  <span className="hidden md:block text-sm font-bold text-gray-900">
-                    {user.full_name}
-                  </span>
-                  {currentLevel > 0 && (
-                    <span className="hidden md:block text-xs font-bold text-white bg-purple-600 px-2 py-0.5 rounded-full">
-                      Lv {currentLevel}
+                  <div className="hidden md:flex flex-col items-end">
+                    <span className="text-sm font-bold text-gray-900">
+                      {user.full_name}
                     </span>
-                  )}
+                    <span className="text-xs text-gray-500">
+                      Lv {currentLevel} • {levelRank}
+                    </span>
+                  </div>
                   {highestBadge && (
                     <span className="hidden md:block text-base" title={`${highestBadge} badge`}>
                       {badgeColors[highestBadge]}
