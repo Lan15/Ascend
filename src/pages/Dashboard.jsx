@@ -24,6 +24,12 @@ import ActiveGoalsWidget from "../components/dashboard/widgets/ActiveGoalsWidget
 import AchievementsWidget from "../components/dashboard/widgets/AchievementsWidget";
 import GemsWidget from "../components/dashboard/widgets/GemsWidget";
 import CalendarWidget from "../components/dashboard/widgets/CalendarWidget";
+import WeeklyActivityWidget from "../components/dashboard/widgets/WeeklyActivityWidget";
+import HabitStrengthWidget from "../components/dashboard/widgets/HabitStrengthWidget";
+import ChallengeProgressWidget from "../components/dashboard/widgets/ChallengeProgressWidget";
+import LeaderboardWidget from "../components/dashboard/widgets/LeaderboardWidget";
+import MotivationWidget from "../components/dashboard/widgets/MotivationWidget";
+import FocusTimerWidget from "../components/dashboard/widgets/FocusTimerWidget";
 
 const AVAILABLE_WIDGETS = [
   { id: 'streak', name: 'Streak', component: StreakWidget, defaultSpan: 1 },
@@ -37,7 +43,13 @@ const AVAILABLE_WIDGETS = [
   { id: 'activegoals', name: 'Active Goals', component: ActiveGoalsWidget, defaultSpan: 1 },
   { id: 'achievements', name: 'Achievements', component: AchievementsWidget, defaultSpan: 1 },
   { id: 'gems', name: 'Your Gems', component: GemsWidget, defaultSpan: 1 },
-  { id: 'calendar', name: 'Calendar', component: CalendarWidget, defaultSpan: 2 }
+  { id: 'calendar', name: 'Calendar', component: CalendarWidget, defaultSpan: 2 },
+  { id: 'weeklyactivity', name: 'Weekly Activity Graph', component: WeeklyActivityWidget, defaultSpan: 2 },
+  { id: 'habitstrength', name: 'Habit Strength', component: HabitStrengthWidget, defaultSpan: 1 },
+  { id: 'challengeprogress', name: 'Challenge Progress', component: ChallengeProgressWidget, defaultSpan: 1 },
+  { id: 'leaderboard', name: 'Leaderboard Rank', component: LeaderboardWidget, defaultSpan: 1 },
+  { id: 'motivation', name: 'Daily Motivation', component: MotivationWidget, defaultSpan: 2 },
+  { id: 'focustimer', name: 'Focus Timer', component: FocusTimerWidget, defaultSpan: 1 }
 ];
 
 const DEFAULT_WIDGETS = ['streak', 'xp', 'goals', 'tasks', 'recent', 'ai'];

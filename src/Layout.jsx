@@ -123,23 +123,23 @@ export default function Layout({ children, currentPageName }) {
                 Routine Quest
               </h1>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {user?.full_name && (
-                <div className="hidden md:flex items-center gap-2">
-                  <span className="text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 px-3 py-1 rounded-full">
+                <>
+                  <span className="hidden md:block text-sm font-bold text-gray-900">
                     {user.full_name}
                   </span>
                   {currentLevel > 0 && (
-                    <span className="text-sm font-bold text-purple-600 bg-white px-2 py-1 rounded-full">
-                      Lv.{currentLevel}
+                    <span className="hidden md:block text-xs font-bold text-white bg-purple-600 px-2 py-0.5 rounded-full">
+                      Lv {currentLevel}
                     </span>
                   )}
                   {highestBadge && (
-                    <span className="text-lg" title={`${highestBadge} badge`}>
+                    <span className="hidden md:block text-base" title={`${highestBadge} badge`}>
                       {badgeColors[highestBadge]}
                     </span>
                   )}
-                </div>
+                </>
               )}
               {user?.avatar_url ? (
                 <Link to="/Profile" className="relative">
