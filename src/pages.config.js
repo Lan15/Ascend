@@ -49,28 +49,28 @@
  */
 import AICoach from './pages/AICoach';
 import Achievements from './pages/Achievements';
+import Challenges from './pages/Challenges';
 import Dashboard from './pages/Dashboard';
 import Goals from './pages/Goals';
+import Leaderboard from './pages/Leaderboard';
 import Profile from './pages/Profile';
 import Progress from './pages/Progress';
 import Routines from './pages/Routines';
 import Today from './pages/Today';
-import Challenges from './pages/Challenges';
-import Leaderboard from './pages/Leaderboard';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AICoach": AICoach,
     "Achievements": Achievements,
+    "Challenges": Challenges,
     "Dashboard": Dashboard,
     "Goals": Goals,
+    "Leaderboard": Leaderboard,
     "Profile": Profile,
     "Progress": Progress,
     "Routines": Routines,
     "Today": Today,
-    "Challenges": Challenges,
-    "Leaderboard": Leaderboard,
 }
 
 export const pagesConfig = {
