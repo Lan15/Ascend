@@ -59,8 +59,9 @@ export default function SpotifyMusicPanel() {
       queryClient.invalidateQueries(['spotifyTopTracks']);
       toast.success('Spotify connected!');
     },
-    onError: () => {
-      toast.error('Failed to connect. Please authorize Spotify first.');
+    onError: (error) => {
+      console.error('Spotify connection error:', error);
+      toast.error(error?.response?.data?.error || 'Failed to connect. Please contact support to authorize Spotify.');
     }
   });
 

@@ -9,7 +9,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action, playlistUri, trackUris, deviceId } = await req.json();
+    const body = await req.json();
+    const { action, playlistUri, trackUris, deviceId, query } = body;
 
     // Get Spotify access token from app connector
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('spotify');
@@ -70,7 +71,6 @@ Deno.serve(async (req) => {
 
     // Search tracks
     if (action === 'search') {
-      const { query } = await req.json();
       const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track,playlist&limit=20`, {
         headers: { 'Authorization': `Bearer ${accessToken}` }
       });
