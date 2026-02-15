@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Target, CheckCircle2, Calendar, Repeat, Layers } from "lucide-react";
+import { Plus, Edit, Trash2, Target, CheckCircle2, Calendar, Repeat, Layers, X, AlertCircle, Clock } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from 'date-fns';
 import { toast } from "sonner";
@@ -28,6 +28,8 @@ export default function Goals() {
     target_duration_minutes: '',
     category: 'personal',
     deadline: '',
+    is_time_bounded: false,
+    time_bound_date: '',
     is_recurring: false,
     recurrence_pattern: 'daily',
     recurrence_days: [],
@@ -76,6 +78,8 @@ export default function Goals() {
       target_duration_minutes: '',
       category: 'personal',
       deadline: '',
+      is_time_bounded: false,
+      time_bound_date: '',
       is_recurring: false,
       recurrence_pattern: 'daily',
       recurrence_days: [],
@@ -107,6 +111,8 @@ export default function Goals() {
       target_duration_minutes: goal.target_duration_minutes || '',
       category: goal.category || 'personal',
       deadline: goal.deadline || '',
+      is_time_bounded: goal.is_time_bounded || false,
+      time_bound_date: goal.time_bound_date || '',
       is_recurring: goal.is_recurring || false,
       recurrence_pattern: goal.recurrence_pattern || 'daily',
       recurrence_days: goal.recurrence_days || [],
@@ -115,9 +121,10 @@ export default function Goals() {
     setShowDialog(true);
   };
 
-  const activeGoals = goals.filter(g => !g.completed && !g.parent_goal_id);
+  const activeGoals = goals.filter(g => !g.completed && !g.parent_goal_id && !g.is_lost);
   const completedGoals = goals.filter(g => g.completed && !g.parent_goal_id);
-  const longTermGoals = goals.filter(g => g.is_long_term && !g.completed);
+  const longTermGoals = goals.filter(g => g.is_long_term && !g.completed && !g.is_lost);
+  const lostGoals = goals.filter(g => g.is_lost);
 
   const categoryColors = {
     health: "bg-red-100 text-red-800 border-red-200",
@@ -156,6 +163,12 @@ export default function Goals() {
                   Long-term
                 </span>
               )}
+              {goal.is_time_bounded && !goal.is_lost && (
+                <span className="px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700 flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  Time-bound
+                </span>
+              )}
             </div>
             {goal.description && (
               <p className="text-gray-600 mb-2">{goal.description}</p>
@@ -174,6 +187,12 @@ export default function Goals() {
                 </span>
               )}
             </div>
+            {goal.is_time_bounded && goal.time_bound_date && !goal.is_lost && (
+              <p className="text-sm text-orange-600 font-semibold flex items-center gap-2 mt-2">
+                <AlertCircle className="w-4 h-4" />
+                Must complete by: {format(new Date(goal.time_bound_date), 'MMM d, yyyy h:mm a')}
+              </p>
+            )}
             {goal.completed && goal.completed_date && (
               <p className="text-xs text-green-600 mt-2">
                 Completed on {format(new Date(goal.completed_date), 'MMM d, yyyy')}
@@ -253,7 +272,7 @@ export default function Goals() {
         </div>
 
         <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full max-w-2xl grid-cols-3 mb-6">
+          <TabsList className="grid w-full max-w-3xl grid-cols-4 mb-6">
             <TabsTrigger value="active" className="flex items-center gap-2">
               <Target className="w-4 h-4" />
               Active ({activeGoals.length})
@@ -265,6 +284,10 @@ export default function Goals() {
             <TabsTrigger value="completed" className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
               Completed ({completedGoals.length})
+            </TabsTrigger>
+            <TabsTrigger value="lost" className="flex items-center gap-2 text-red-600">
+              <X className="w-4 h-4" />
+              Lost ({lostGoals.length})
             </TabsTrigger>
           </TabsList>
 
@@ -342,6 +365,57 @@ export default function Goals() {
               </Card>
             ) : (
               completedGoals.map(goal => <GoalCard key={goal.id} goal={goal} />)
+            )}
+          </TabsContent>
+
+          <TabsContent value="lost" className="space-y-4">
+            {lostGoals.length === 0 ? (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <Target className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500">No lost goals - great job staying on track!</p>
+                </CardContent>
+              </Card>
+            ) : (
+              lostGoals.map(goal => (
+                <Card key={goal.id} className="border-2 border-red-300 bg-red-50">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                            <X className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-xl text-red-700 line-through">{goal.title}</span>
+                            <span className="text-xs bg-red-200 text-red-800 px-2 py-1 rounded">Missed Deadline</span>
+                          </div>
+                        </div>
+                        {goal.description && (
+                          <p className="text-gray-600 mb-3">{goal.description}</p>
+                        )}
+                        {goal.lost_date && (
+                          <p className="text-sm text-red-700 font-semibold">
+                            Time limit expired: {format(new Date(goal.lost_date), 'MMM d, yyyy h:mm a')}
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          if (confirm('Delete this lost goal?')) {
+                            deleteMutation.mutate(goal.id);
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
             )}
           </TabsContent>
         </Tabs>
@@ -422,6 +496,36 @@ export default function Goals() {
                   value={formData.deadline}
                   onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
                 />
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    checked={formData.is_time_bounded}
+                    onCheckedChange={(checked) => setFormData({...formData, is_time_bounded: checked})}
+                    id="time-bounded"
+                  />
+                  <label htmlFor="time-bounded" className="text-sm font-medium cursor-pointer">
+                    Time-bounded (strict deadline with exact time)
+                  </label>
+                </div>
+                
+                {formData.is_time_bounded && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Exact Deadline (Date & Time) *
+                    </label>
+                    <Input
+                      type="datetime-local"
+                      value={formData.time_bound_date}
+                      onChange={(e) => setFormData({...formData, time_bound_date: e.target.value})}
+                      required={formData.is_time_bounded}
+                    />
+                    <p className="text-xs text-orange-600 mt-1">
+                      ⚠️ Goal will be marked as lost if not completed by this time
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-4 pt-2 border-t">

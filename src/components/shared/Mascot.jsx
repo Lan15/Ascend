@@ -10,7 +10,10 @@ const mascotMessages = [
   { type: 'wisdom', icon: TrendingUp, message: "The secret to success: Start small, stay consistent, and never give up!" },
   { type: 'tip', icon: Lightbulb, message: "Pro tip: Break big goals into smaller tasks. It makes them less overwhelming and more achievable!" },
   { type: 'motivation', icon: Star, message: "Remember: Progress, not perfection. You're building lasting habits!" },
-  { type: 'wisdom', icon: TrendingUp, message: "Discipline is choosing between what you want now and what you want most." }
+  { type: 'wisdom', icon: TrendingUp, message: "Discipline is choosing between what you want now and what you want most." },
+  { type: 'warning', icon: TrendingUp, message: "⏰ Don't forget your time-bounded goals! Stay focused and complete them on time." },
+  { type: 'warning', icon: Lightbulb, message: "⚡ Time is ticking! Be fast and consistent with your goals to avoid missing deadlines." },
+  { type: 'reminder', icon: Star, message: "🎯 Missed a deadline? Don't give up! Learn from it and set a new goal. You've got this!" }
 ];
 
 // Pencil mascot activities
