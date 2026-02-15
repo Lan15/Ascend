@@ -26,35 +26,37 @@ export default function MiniCalendar({ completions = [] }) {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5 text-purple-600" />
+          <CardTitle className="flex items-center gap-2 text-sm">
+            <CalendarIcon className="w-4 h-4 text-purple-600" />
             Calendar
           </CardTitle>
           <div className="flex gap-1">
             <Button
               variant="ghost"
               size="icon"
+              className="h-7 w-7"
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3 h-3" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
+              className="h-7 w-7"
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3 h-3" />
             </Button>
           </div>
         </div>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-xs text-gray-500 mt-1">
           {format(currentMonth, 'MMMM yyyy')}
         </p>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-7 gap-1 mb-2">
+        <div className="grid grid-cols-7 gap-1 mb-1">
           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
             <div key={idx} className="text-center text-xs font-semibold text-gray-500">
               {day}
@@ -75,7 +77,7 @@ export default function MiniCalendar({ completions = [] }) {
               <Link
                 key={idx}
                 to={isToday ? '/Today' : '#'}
-                className={`aspect-square flex items-center justify-center text-sm rounded-lg transition-all ${
+                className={`aspect-square flex items-center justify-center text-xs rounded transition-all ${
                   isToday
                     ? 'bg-purple-600 text-white font-bold cursor-pointer hover:bg-purple-700'
                     : hasActivity
@@ -89,13 +91,13 @@ export default function MiniCalendar({ completions = [] }) {
           })}
         </div>
 
-        <div className="flex items-center gap-4 mt-4 text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-purple-600" />
+        <div className="flex items-center gap-3 mt-3 text-xs">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded bg-purple-600" />
             <span className="text-gray-600">Today</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-green-100" />
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 rounded bg-green-100" />
             <span className="text-gray-600">Activity</span>
           </div>
         </div>

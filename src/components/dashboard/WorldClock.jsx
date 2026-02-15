@@ -64,17 +64,17 @@ export default function WorldClock({ savedTimezones = [] }) {
 
   return (
     <Card className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-white">
-          <Clock className="w-5 h-5" />
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-white text-sm">
+          <Clock className="w-4 h-4" />
           World Clock
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3 mb-4">
+        <div className="space-y-2 mb-3">
           {selectedTimezones.map((tz, idx) => (
-            <div key={tz} className="bg-white/10 rounded-lg p-3">
-              <div className="flex items-center justify-between mb-1">
+            <div key={tz} className="bg-white/10 rounded-lg p-2">
+              <div className="flex items-center justify-between mb-0.5">
                 <span className="text-xs opacity-75">{getTimezoneLabel(tz)}</span>
                 {selectedTimezones.length > 1 && (
                   <button
@@ -85,7 +85,7 @@ export default function WorldClock({ savedTimezones = [] }) {
                   </button>
                 )}
               </div>
-              <div className="text-3xl font-bold font-mono">
+              <div className="text-xl font-bold font-mono">
                 {getTimeInZone(tz)}
               </div>
             </div>
