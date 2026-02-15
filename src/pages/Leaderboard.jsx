@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Crown, Medal, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Trophy, Crown, Medal, TrendingUp, UserPlus, Copy, Check } from "lucide-react";
 import { startOfWeek, format } from 'date-fns';
+import { toast } from "sonner";
 
 export default function Leaderboard() {
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
@@ -28,14 +34,34 @@ export default function Leaderboard() {
     return <span className="text-gray-600 font-bold">#{rank}</span>;
   };
 
+  const inviteLink = `${window.location.origin}`;
+
+  const copyInviteLink = () => {
+    navigator.clipboard.writeText(inviteLink);
+    setCopied(true);
+    toast.success('Invite link copied!');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Weekly Leaderboard 🏆
-          </h1>
-          <p className="text-gray-600 mt-2">Compete with friends this week</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Weekly Leaderboard 🏆
+              </h1>
+              <p className="text-gray-600 mt-2">Compete with friends this week</p>
+            </div>
+            <Button
+              onClick={() => setInviteDialogOpen(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Invite Friends
+            </Button>
+          </div>
         </div>
 
         <Card className="mb-6 bg-gradient-to-br from-purple-500 to-pink-500 text-white">
@@ -98,6 +124,52 @@ export default function Leaderboard() {
             </div>
           </CardContent>
         </Card>
+
+        <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Invite Friends to Routine Quest</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Share this link with friends and compete together on the leaderboard!
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={inviteLink}
+                  readOnly
+                  className="flex-1 px-3 py-2 border rounded-lg bg-gray-50 text-sm"
+                />
+                <Button onClick={copyInviteLink} variant="outline">
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+              <div className="pt-4 border-t">
+                <p className="text-xs text-gray-500 mb-3">Share via:</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      window.open(`https://wa.me/?text=Join me on Routine Quest! ${encodeURIComponent(inviteLink)}`, '_blank');
+                    }}
+                    className="bg-green-500 text-white hover:bg-green-600"
+                  >
+                    WhatsApp
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      window.open(`mailto:?subject=Join Routine Quest&body=Join me on Routine Quest! ${inviteLink}`, '_blank');
+                    }}
+                  >
+                    Email
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

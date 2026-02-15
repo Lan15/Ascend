@@ -16,9 +16,13 @@ const timezones = [
   { label: 'Mumbai (IST)', value: 'Asia/Kolkata' },
 ];
 
-export default function WorldClock() {
+export default function WorldClock({ savedTimezones = [] }) {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const [selectedTimezones, setSelectedTimezones] = useState(
+    savedTimezones.length > 0 
+      ? savedTimezones 
+      : [Intl.DateTimeFormat().resolvedOptions().timeZone]
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,10 +31,10 @@ export default function WorldClock() {
     return () => clearInterval(interval);
   }, []);
 
-  const getTimeInZone = () => {
+  const getTimeInZone = (tz) => {
     try {
       return new Intl.DateTimeFormat('en-US', {
-        timeZone: timezone,
+        timeZone: tz,
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
@@ -41,22 +45,20 @@ export default function WorldClock() {
     }
   };
 
-  const getDateInZone = () => {
-    try {
-      return new Intl.DateTimeFormat('en-US', {
-        timeZone: timezone,
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }).format(currentTime);
-    } catch {
-      return currentTime.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
+  const getTimezoneLabel = (tz) => {
+    const found = timezones.find(t => t.value === tz);
+    return found ? found.label : tz;
+  };
+
+  const addTimezone = (tz) => {
+    if (!selectedTimezones.includes(tz) && selectedTimezones.length < 4) {
+      setSelectedTimezones([...selectedTimezones, tz]);
+    }
+  };
+
+  const removeTimezone = (tz) => {
+    if (selectedTimezones.length > 1) {
+      setSelectedTimezones(selectedTimezones.filter(t => t !== tz));
     }
   };
 
@@ -69,25 +71,43 @@ export default function WorldClock() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-center mb-4">
-          <div className="text-5xl font-bold font-mono mb-2">
-            {getTimeInZone()}
-          </div>
-          <p className="text-sm opacity-90">{getDateInZone()}</p>
+        <div className="space-y-3 mb-4">
+          {selectedTimezones.map((tz, idx) => (
+            <div key={tz} className="bg-white/10 rounded-lg p-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs opacity-75">{getTimezoneLabel(tz)}</span>
+                {selectedTimezones.length > 1 && (
+                  <button
+                    onClick={() => removeTimezone(tz)}
+                    className="text-xs opacity-75 hover:opacity-100"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+              <div className="text-3xl font-bold font-mono">
+                {getTimeInZone(tz)}
+              </div>
+            </div>
+          ))}
         </div>
         
-        <Select value={timezone} onValueChange={setTimezone}>
-          <SelectTrigger className="bg-white/20 border-white/30 text-white">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {timezones.map(tz => (
-              <SelectItem key={tz.value} value={tz.value}>
-                {tz.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {selectedTimezones.length < 4 && (
+          <Select onValueChange={addTimezone}>
+            <SelectTrigger className="bg-white/20 border-white/30 text-white">
+              <SelectValue placeholder="Add timezone..." />
+            </SelectTrigger>
+            <SelectContent>
+              {timezones
+                .filter(tz => !selectedTimezones.includes(tz.value))
+                .map(tz => (
+                  <SelectItem key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        )}
       </CardContent>
     </Card>
   );

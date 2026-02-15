@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
@@ -71,18 +72,19 @@ export default function MiniCalendar({ completions = [] }) {
             const hasActivity = hasCompletion(date);
             
             return (
-              <div
+              <Link
                 key={idx}
+                to={isToday ? '/Today' : '#'}
                 className={`aspect-square flex items-center justify-center text-sm rounded-lg transition-all ${
                   isToday
-                    ? 'bg-purple-600 text-white font-bold'
+                    ? 'bg-purple-600 text-white font-bold cursor-pointer hover:bg-purple-700'
                     : hasActivity
                     ? 'bg-green-100 text-green-800 font-semibold'
                     : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                } ${!isToday ? 'pointer-events-none' : ''}`}
               >
                 {format(date, 'd')}
-              </div>
+              </Link>
             );
           })}
         </div>
