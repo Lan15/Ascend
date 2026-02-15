@@ -65,12 +65,34 @@ export default function Today() {
         notes: notes
       });
 
+      // Calculate streak
+      const allCompletions = await base44.entities.CompletionLog.list('-completion_date', 365);
+      const uniqueDates = [...new Set(allCompletions.map(c => c.completion_date))].sort().reverse();
+      
+      let streak = 0;
+      let checkDate = new Date();
+      checkDate.setHours(0, 0, 0, 0);
+      
+      for (const dateStr of uniqueDates) {
+        const completionDate = new Date(dateStr);
+        completionDate.setHours(0, 0, 0, 0);
+        
+        const daysDiff = Math.floor((checkDate - completionDate) / (1000 * 60 * 60 * 24));
+        
+        if (daysDiff === streak) {
+          streak++;
+        } else if (daysDiff > streak) {
+          break;
+        }
+      }
+
       // Award XP
       const xpGained = type === 'routine' ? 10 : 50;
       const gemsGained = 2;
       await base44.auth.updateMe({
         total_xp: (user?.total_xp || 0) + xpGained,
-        gems: (user?.gems || 0) + gemsGained
+        gems: (user?.gems || 0) + gemsGained,
+        current_streak: streak
       });
 
       if (type === 'goal') {
