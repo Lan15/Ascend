@@ -6,6 +6,74 @@ import { Card } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
 import { getTheme } from '@/components/shared/themeColors';
 
+const ClocalMascot = () => {
+  return (
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+      {/* Clock face */}
+      <motion.circle
+        cx="32"
+        cy="32"
+        r="22"
+        fill="white"
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <circle cx="32" cy="32" r="20" fill="white" />
+      <circle cx="32" cy="32" r="18" stroke="#E5E7EB" strokeWidth="1" fill="white" />
+
+      {/* Clock numbers */}
+      <text x="32" y="18" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">12</text>
+      <text x="44" y="35" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">3</text>
+      <text x="32" y="48" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">6</text>
+      <text x="20" y="35" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">9</text>
+
+      {/* Clock hands */}
+      <g>
+        <motion.line
+          x1="32" y1="32" x2="32" y2="22"
+          stroke="#1F2937" strokeWidth="2" strokeLinecap="round"
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          style={{ transformOrigin: '32px 32px' }}
+        />
+        <motion.line
+          x1="32" y1="32" x2="32" y2="18"
+          stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round"
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+          style={{ transformOrigin: '32px 32px' }}
+        />
+        <circle cx="32" cy="32" r="2" fill="#1F2937" />
+      </g>
+
+      {/* Calendar pages */}
+      <motion.g animate={{ y: [0, -3, 0], rotate: [0, 5, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
+        <rect x="8" y="10" width="12" height="14" fill="white" stroke="#3B82F6" strokeWidth="1" rx="1" />
+        <rect x="8" y="10" width="12" height="3" fill="#3B82F6" />
+        <text x="14" y="18" textAnchor="middle" fontSize="6" fill="#1F2937" fontWeight="bold">15</text>
+      </motion.g>
+
+      <motion.g animate={{ y: [0, 3, 0], rotate: [0, -5, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}>
+        <rect x="44" y="42" width="12" height="14" fill="white" stroke="#10B981" strokeWidth="1" rx="1" />
+        <rect x="44" y="42" width="12" height="3" fill="#10B981" />
+        <text x="50" y="50" textAnchor="middle" fontSize="6" fill="#1F2937" fontWeight="bold">28</text>
+      </motion.g>
+
+      {/* Smiley face */}
+      <circle cx="28" cy="28" r="1.5" fill="#1F2937" />
+      <circle cx="36" cy="28" r="1.5" fill="#1F2937" />
+      <motion.path 
+        d="M27 36 Q32 39 37 36" 
+        stroke="#1F2937" 
+        strokeWidth="1.5" 
+        fill="none"
+        animate={{ d: ["M27 36 Q32 39 37 36", "M27 36 Q32 37 37 36", "M27 36 Q32 39 37 36"] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+    </svg>
+  );
+};
+
 export default function AICoachDailyInsight({ user, completions = [], routines = [], goals = [] }) {
   const [show, setShow] = useState(false);
   const [currentPost, setCurrentPost] = useState(0);
