@@ -17,7 +17,8 @@ import {
   Star,
   Zap,
   Rocket,
-  Crown
+  Crown,
+  ClipboardList
 } from 'lucide-react';
 
 const avatarIcons = {
@@ -94,7 +95,7 @@ export default function Layout({ children, currentPageName }) {
 
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', tooltip: 'Overview & Stats' },
-    { name: 'Today', icon: CheckSquare, path: 'Today', tooltip: "Today's Tasks" },
+    { name: 'Today', icon: ClipboardList, path: 'Today', tooltip: "Today's Tasks" },
     { name: 'Routines', icon: Calendar, path: 'Routines', tooltip: 'Daily Habits' },
     { name: 'Tasks', icon: CheckSquare, path: 'Tasks', tooltip: 'Quick Checklist' },
     { name: 'Goals', icon: Target, path: 'Goals', tooltip: 'Set & Track Goals' },
