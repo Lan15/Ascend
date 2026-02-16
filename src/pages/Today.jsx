@@ -436,6 +436,8 @@ export default function Today() {
               <ActivityTimer 
                 onComplete={handleTimerComplete}
                 targetMinutes={selectedItem?.item.target_duration_minutes}
+                initialSeconds={timerSeconds}
+                initialRunning={isTimerRunning}
                 onTimerUpdate={(seconds, running) => {
                   setTimerSeconds(seconds);
                   setIsTimerRunning(running);

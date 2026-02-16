@@ -80,33 +80,33 @@ const ClockCalendarMascot = ({ activity = 'time' }) => {
             <text x="32" y="48" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">6</text>
             <text x="20" y="35" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">9</text>
 
-            {/* Clock hands */}
-            <g transform="translate(32, 32)">
+            {/* Clock hands - centered properly */}
+            <g>
               <motion.line
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="-10"
+                x1="32"
+                y1="32"
+                x2="32"
+                y2="22"
                 stroke="#1F2937"
                 strokeWidth="2"
                 strokeLinecap="round"
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                style={{ transformOrigin: 'center' }}
+                style={{ transformOrigin: '32px 32px' }}
               />
               <motion.line
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="-14"
+                x1="32"
+                y1="32"
+                x2="32"
+                y2="18"
                 stroke="#3B82F6"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
-                style={{ transformOrigin: 'center' }}
+                style={{ transformOrigin: '32px 32px' }}
               />
-              <circle cx="0" cy="0" r="2" fill="#1F2937" />
+              <circle cx="32" cy="32" r="2" fill="#1F2937" />
             </g>
 
             {/* Calendar pages floating around */}
