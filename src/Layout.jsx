@@ -129,7 +129,7 @@ export default function Layout({ children, currentPageName }) {
               {user?.full_name && (
                 <>
                   <div className="hidden md:flex flex-col items-end">
-                        <span className="text-sm font-bold text-gray-900" style={{ WebkitTextStroke: '0.8px white', paintOrder: 'stroke fill' }}>
+                        <span className={`text-sm font-bold bg-gradient-to-r ${getTheme(user?.theme_primary).from600} ${getTheme(user?.theme_primary).to600} bg-clip-text text-transparent`}>
                           {user.full_name}
                         </span>
                     <span className="text-xs text-gray-500">
