@@ -2,13 +2,20 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ListChecks } from 'lucide-react';
 import { format, subDays } from 'date-fns';
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 
 export default function TaskProgressWidget({ completions, routines, goals }) {
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['tasks'],
+    queryFn: () => base44.entities.Task.list()
+  });
   const today = format(new Date(), 'yyyy-MM-dd');
   const todayCompletions = completions.filter(c => c.completion_date === today);
   
   const routineCompletionsToday = todayCompletions.filter(c => c.routine_id).length;
   const goalCompletionsToday = todayCompletions.filter(c => c.goal_id).length;
+  const taskCompletionsToday = tasks.filter(t => t.completed && t.completed_date === today).length;
   
   const activeRoutines = routines.filter(r => r.active).length;
   
@@ -17,13 +24,14 @@ export default function TaskProgressWidget({ completions, routines, goals }) {
 
   const last7Days = Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), i), 'yyyy-MM-dd'));
   const weeklyCompletions = completions.filter(c => last7Days.includes(c.completion_date)).length;
+  const weeklyTaskCompletions = tasks.filter(t => t.completed && t.completed_date && last7Days.includes(t.completed_date)).length;
 
   return (
     <Card className="h-full">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <ListChecks className="w-4 h-4 text-indigo-500" />
-          Task Progress
+          Progress
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -41,10 +49,16 @@ export default function TaskProgressWidget({ completions, routines, goals }) {
               </div>
               <p className="text-xs text-gray-500">completed today</p>
             </div>
+            <div>
+              <div className="text-2xl font-bold text-blue-600">
+                Tasks: {taskCompletionsToday}
+              </div>
+              <p className="text-xs text-gray-500">completed today</p>
+            </div>
           </div>
           <div className="pt-2 border-t">
             <div className="text-lg font-semibold text-gray-700">
-              {weeklyCompletions}
+              {weeklyCompletions + weeklyTaskCompletions}
             </div>
             <p className="text-xs text-gray-500">this week</p>
           </div>
