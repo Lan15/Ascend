@@ -297,7 +297,7 @@ export default function Profile() {
           <Button
             onClick={handleSave}
             disabled={updateMutation.isPending}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+            className={`bg-gradient-to-r ${themePrimary ? `from-${themePrimary}-600 to-${themePrimary === 'purple' ? 'pink' : themePrimary}-600` : 'from-purple-600 to-pink-600'} text-white`}
           >
             <Save className="w-4 h-4 mr-2" />
             {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
