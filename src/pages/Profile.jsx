@@ -257,7 +257,7 @@ export default function Profile() {
                 <label className="block text-sm font-medium mb-2">Upload Custom Avatar</label>
                 <div className="flex items-center gap-4">
                   {avatarUrl && (
-                    <img src={avatarUrl} alt="Avatar" className="w-20 h-20 rounded-full object-cover border-2 border-purple-500" />
+                    <img src={avatarUrl} alt="Avatar" className={`w-20 h-20 rounded-full object-cover border-2 ${themePrimary ? `border-${themePrimary}-500` : 'border-purple-500'}`} />
                   )}
                   <div className="flex-1">
                     <Input
