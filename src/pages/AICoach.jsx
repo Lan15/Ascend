@@ -190,7 +190,7 @@ Provide a concise, actionable response (2-3 paragraphs max) with specific sugges
             WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
             paintOrder: 'stroke fill'
           }}>
-            AI Coach <span className="text-4xl">🧠</span>
+            AI Coach <span className="text-4xl" style={{ WebkitTextStroke: '0.5px rgba(255,255,255,0.4)', paintOrder: 'stroke fill' }}>🧠</span>
           </h1>
           <p className="text-gray-600 mt-2">Personalized insights powered by your patterns</p>
         </div>

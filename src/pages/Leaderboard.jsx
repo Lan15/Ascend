@@ -55,7 +55,7 @@ export default function Leaderboard() {
               WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
               paintOrder: 'stroke fill'
             }}>
-                Weekly Leaderboard <span className="text-4xl">🏆</span>
+                Weekly Leaderboard <span className="text-4xl" style={{ WebkitTextStroke: '0.5px rgba(255,255,255,0.4)', paintOrder: 'stroke fill' }}>🏆</span>
               </h1>
               <p className="text-gray-600 mt-2">Compete with friends this week</p>
             </div>

@@ -290,7 +290,7 @@ export default function Today() {
               WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
               paintOrder: 'stroke fill'
             }}>
-              Today's Quest <span className="text-4xl">🎯</span>
+              Today's Quest <span className="text-4xl" style={{ WebkitTextStroke: '0.5px rgba(255,255,255,0.4)', paintOrder: 'stroke fill' }}>🎯</span>
             </h1>
             <p className="text-gray-600 mt-2">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
           </div>

@@ -126,7 +126,7 @@ export default function Progress() {
             WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
             paintOrder: 'stroke fill'
           }}>
-            Progress Analytics <span className="text-4xl">📊</span>
+            Progress Analytics <span className="text-4xl" style={{ WebkitTextStroke: '0.5px rgba(255,255,255,0.4)', paintOrder: 'stroke fill' }}>📊</span>
           </h1>
           <p className="text-gray-600 mt-2">Track your journey and improvements</p>
         </div>

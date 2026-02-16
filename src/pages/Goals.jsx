@@ -266,7 +266,7 @@ export default function Goals() {
               paintOrder: 'stroke fill'
             }}>
               <span>Goals & Achievements</span>
-              <span className="text-4xl">🎯</span>
+              <span className="text-4xl" style={{ WebkitTextStroke: '0.5px rgba(255,255,255,0.4)', paintOrder: 'stroke fill' }}>🎯</span>
             </h1>
             <p className="text-gray-600 mt-2">Set goals and conquer them</p>
           </div>
