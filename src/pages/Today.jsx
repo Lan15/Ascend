@@ -17,11 +17,26 @@ import ConfettiEffect from "../components/shared/ConfettiEffect";
 
 export default function Today() {
   const queryClient = useQueryClient();
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [showTimer, setShowTimer] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(true);
+  const [selectedItem, setSelectedItem] = useState(() => {
+    const saved = localStorage.getItem('timerState');
+    return saved ? JSON.parse(saved).selectedItem : null;
+  });
+  const [showTimer, setShowTimer] = useState(() => {
+    const saved = localStorage.getItem('timerState');
+    return saved ? JSON.parse(saved).showTimer : false;
+  });
+  const [isMinimized, setIsMinimized] = useState(() => {
+    const saved = localStorage.getItem('timerState');
+    return saved ? JSON.parse(saved).isMinimized : false;
+  });
+  const [timerSeconds, setTimerSeconds] = useState(() => {
+    const saved = localStorage.getItem('timerState');
+    return saved ? JSON.parse(saved).timerSeconds : 0;
+  });
+  const [isTimerRunning, setIsTimerRunning] = useState(() => {
+    const saved = localStorage.getItem('timerState');
+    return saved ? JSON.parse(saved).isTimerRunning : true;
+  });
   const [learning, setLearning] = useState('');
   const [notes, setNotes] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
@@ -29,6 +44,21 @@ export default function Today() {
   const [showStreakSaver, setShowStreakSaver] = useState(false);
   
   const today = format(new Date(), 'yyyy-MM-dd');
+
+  // Persist timer state
+  useEffect(() => {
+    if (showTimer) {
+      localStorage.setItem('timerState', JSON.stringify({
+        selectedItem,
+        showTimer,
+        isMinimized,
+        timerSeconds,
+        isTimerRunning
+      }));
+    } else {
+      localStorage.removeItem('timerState');
+    }
+  }, [selectedItem, showTimer, isMinimized, timerSeconds, isTimerRunning]);
 
   const { data: routines = [] } = useQuery({
     queryKey: ['routines'],
@@ -136,13 +166,16 @@ export default function Today() {
       queryClient.invalidateQueries(['completions']);
       queryClient.invalidateQueries(['goals']);
       queryClient.invalidateQueries(['currentUser']);
+      const xp = selectedItem?.type === 'routine' ? 10 : 50;
       setSelectedItem(null);
       setShowTimer(false);
+      setTimerSeconds(0);
+      setIsMinimized(false);
       setLearning('');
       setNotes('');
+      localStorage.removeItem('timerState');
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
-      const xp = selectedItem?.type === 'routine' ? 10 : 50;
       toast.success(`Great job! +${xp} XP +2 💎 | Music paused`);
     }
   });
@@ -185,6 +218,9 @@ export default function Today() {
 
   const handleTimerComplete = (timeSpent) => {
     setIsMinimized(false);
+    setShowTimer(false);
+    setTimerSeconds(0);
+    localStorage.removeItem('timerState');
     completeMutation.mutate({
       item: selectedItem.item,
       timeSpent,

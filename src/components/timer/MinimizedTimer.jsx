@@ -38,56 +38,58 @@ export default function MinimizedTimer({
     <motion.div
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed bottom-4 left-4 z-50"
+      className="fixed bottom-4 left-4 z-50 w-80"
     >
-      <Card className="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-2xl p-3 w-72">
-        <div className="flex items-center gap-3">
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={onMaximize}
-            className="text-white hover:bg-white/20 h-8 w-8"
-          >
-            <Maximize2 className="w-4 h-4" />
-          </Button>
-          
-          <div className="flex-1">
-            <div className="text-xs opacity-90 truncate mb-1">{itemTitle}</div>
-            <div className="flex items-center gap-2">
-              <Timer className="w-4 h-4" />
-              <span className="font-mono font-bold text-lg">{formatTime(seconds)}</span>
+      <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-2xl border-none">
+        <div className="p-4">
+          <div className="flex items-start gap-3">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={onMaximize}
+              className="text-white hover:bg-white/20 h-9 w-9 flex-shrink-0"
+            >
+              <Maximize2 className="w-4 h-4" />
+            </Button>
+            
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium truncate mb-2">{itemTitle}</div>
+              <div className="flex items-center gap-2 mb-2">
+                <Timer className="w-5 h-5 flex-shrink-0" />
+                <span className="font-mono font-bold text-2xl">{formatTime(seconds)}</span>
+                {targetMinutes && (
+                  <span className="text-sm opacity-90">
+                    / {formatTime(targetMinutes * 60)}
+                  </span>
+                )}
+              </div>
               {targetMinutes && (
-                <span className="text-xs opacity-75">
-                  / {formatTime(targetMinutes * 60)}
-                </span>
+                <div className="bg-white/30 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-white h-full rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
               )}
             </div>
-            {targetMinutes && (
-              <div className="mt-1 bg-white/20 rounded-full h-1">
-                <div 
-                  className="bg-white h-full rounded-full transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            )}
-          </div>
 
-          <div className="flex gap-1">
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={onPause}
-              className="text-white hover:bg-white/20 h-8 px-2 text-xs"
-            >
-              {isRunning ? '⏸' : '▶'}
-            </Button>
-            <Button
-              size="sm"
-              onClick={onComplete}
-              className="bg-white text-purple-600 hover:bg-white/90 h-8 px-3 text-xs"
-            >
-              ✓ Done
-            </Button>
+            <div className="flex flex-col gap-2 flex-shrink-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onPause}
+                className="text-white hover:bg-white/20 h-9 w-9 p-0"
+              >
+                <span className="text-xl">{isRunning ? '⏸' : '▶'}</span>
+              </Button>
+              <Button
+                size="sm"
+                onClick={onComplete}
+                className="bg-white text-purple-600 hover:bg-white/90 h-9 px-3 font-medium"
+              >
+                ✓ Done
+              </Button>
+            </div>
           </div>
         </div>
       </Card>
