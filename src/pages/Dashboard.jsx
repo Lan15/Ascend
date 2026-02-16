@@ -11,6 +11,7 @@ import { Settings, Save, Plus, Trash2, GripVertical } from 'lucide-react';
 import { toast } from "sonner";
 import Mascot from "../components/shared/Mascot";
 import { getTheme } from "../components/shared/themeColors";
+import AICoachDailyInsight from "../components/dashboard/AICoachDailyInsight";
 
 // Widget imports
 import StreakWidget from "../components/dashboard/widgets/StreakWidget";
@@ -192,6 +193,12 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6">
       <div className="max-w-7xl mx-auto">
         <Mascot pageContext="dashboard" user={user} />
+        <AICoachDailyInsight 
+          user={user} 
+          completions={completions}
+          routines={routines}
+          goals={goals}
+        />
         
         <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>

@@ -56,8 +56,8 @@ import Leaderboard from './pages/Leaderboard';
 import Profile from './pages/Profile';
 import Progress from './pages/Progress';
 import Routines from './pages/Routines';
-import Today from './pages/Today';
 import Tasks from './pages/Tasks';
+import Today from './pages/Today';
 import __Layout from './Layout.jsx';
 
 
@@ -71,8 +71,8 @@ export const PAGES = {
     "Profile": Profile,
     "Progress": Progress,
     "Routines": Routines,
-    "Today": Today,
     "Tasks": Tasks,
+    "Today": Today,
 }
 
 export const pagesConfig = {
