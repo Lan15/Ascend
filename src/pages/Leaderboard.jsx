@@ -52,7 +52,7 @@ export default function Leaderboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`} style={{
-              WebkitTextStroke: '2px white',
+              WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
               paintOrder: 'stroke fill'
             }}>
                 Weekly Leaderboard <span className="text-4xl">🏆</span>

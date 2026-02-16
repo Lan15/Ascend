@@ -43,7 +43,7 @@ export default function Challenges() {
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
           <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`} style={{
-            WebkitTextStroke: '2px white',
+            WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
             paintOrder: 'stroke fill'
           }}>
             Active Challenges <span className="text-4xl">🏆</span>

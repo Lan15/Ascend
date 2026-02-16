@@ -123,7 +123,7 @@ export default function Progress() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className={`text-4xl font-bold bg-gradient-to-r ${getTheme(user?.theme_primary).from600} ${getTheme(user?.theme_primary).to600} bg-clip-text text-transparent`} style={{
-            WebkitTextStroke: '2px white',
+            WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
             paintOrder: 'stroke fill'
           }}>
             Progress Analytics <span className="text-4xl">📊</span>
