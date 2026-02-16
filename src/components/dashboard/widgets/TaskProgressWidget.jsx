@@ -13,8 +13,13 @@ export default function TaskProgressWidget({ completions, routines, goals }) {
   const today = format(new Date(), 'yyyy-MM-dd');
   const todayCompletions = completions.filter(c => c.completion_date === today);
   
-  const routineCompletionsToday = todayCompletions.filter(c => c.routine_id).length;
-  const goalCompletionsToday = todayCompletions.filter(c => c.goal_id).length;
+  // Count unique routines completed today (not total completion entries)
+  const uniqueRoutineIds = new Set(todayCompletions.filter(c => c.routine_id).map(c => c.routine_id));
+  const routineCompletionsToday = uniqueRoutineIds.size;
+  
+  // Count unique goals completed today
+  const uniqueGoalIds = new Set(todayCompletions.filter(c => c.goal_id).map(c => c.goal_id));
+  const goalCompletionsToday = uniqueGoalIds.size;
   const taskCompletionsToday = tasks.filter(t => t.completed && t.completed_date === today).length;
   
   const activeRoutines = routines.filter(r => r.active).length;
