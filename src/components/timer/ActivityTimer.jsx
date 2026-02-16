@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play, Pause, Square, Timer } from "lucide-react";
 
-export default function ActivityTimer({ onComplete, targetMinutes, onTimerUpdate }) {
-  const [isRunning, setIsRunning] = useState(false);
-  const [seconds, setSeconds] = useState(0);
+export default function ActivityTimer({ onComplete, targetMinutes, onTimerUpdate, initialSeconds = 0, initialRunning = false }) {
+  const [isRunning, setIsRunning] = useState(initialRunning);
+  const [seconds, setSeconds] = useState(initialSeconds);
   const intervalRef = useRef(null);
 
   useEffect(() => {
