@@ -11,6 +11,7 @@ import { Plus, Edit, Trash2, ToggleLeft, ToggleRight, Sparkles } from "lucide-re
 import { toast } from "sonner";
 import QuickStartButtons from "../components/shared/QuickStartButtons";
 import CalendarSync from "../components/routines/CalendarSync";
+import { getTheme } from "../components/shared/themeColors";
 
 const categories = ["health", "work", "learning", "personal", "fitness", "mindfulness"];
 
@@ -31,6 +32,13 @@ export default function Routines() {
     queryKey: ['routines'],
     queryFn: () => base44.entities.Routine.list('-created_date')
   });
+
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const theme = getTheme(user?.theme_primary || 'purple');
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Routine.create(data),
@@ -135,8 +143,8 @@ export default function Routines() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-              Daily Routines 🌟
+            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>
+              Daily Routines <span className="text-4xl">🌟</span>
             </h1>
             <p className="text-gray-600 mt-2">Build habits that stick</p>
           </div>
@@ -145,7 +153,7 @@ export default function Routines() {
               resetForm();
               setShowDialog(true);
             }}
-            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
+            className={`bg-gradient-to-r ${theme.from600} ${theme.to600}`}
           >
             <Plus className="w-4 h-4 mr-2" />
             New Routine
