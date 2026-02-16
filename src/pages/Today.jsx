@@ -286,8 +286,8 @@ export default function Today() {
         {/* Header */}
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Today's Quest 🎯
+            <h1 className={`text-4xl font-bold bg-gradient-to-r ${getTheme(user?.theme_primary).from600} ${getTheme(user?.theme_primary).to600} bg-clip-text text-transparent`}>
+              Today's Quest <span className="text-4xl">🎯</span>
             </h1>
             <p className="text-gray-600 mt-2">{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
           </div>
@@ -336,8 +336,8 @@ export default function Today() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
-              Daily Routines
+              <CheckCircle2 className={`w-5 h-5 ${getTheme(user?.theme_primary).bg.replace('bg-', 'text-')}`} />
+              Daily Routines <span className="text-xl">🌟</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
