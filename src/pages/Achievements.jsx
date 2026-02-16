@@ -60,7 +60,7 @@ export default function Achievements() {
   const theme = getTheme(user?.theme_primary);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-6">
+    <div className="p-6">
       <div className="max-w-6xl mx-auto">
         <Mascot pageContext="achievements" user={user} />
         

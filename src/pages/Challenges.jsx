@@ -39,7 +39,7 @@ export default function Challenges() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-6">
+    <div className="p-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
           <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>

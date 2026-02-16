@@ -119,7 +119,7 @@ export default function Progress() {
   const COLORS = ['#8b5cf6', '#ec4899', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+    <div className="p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className={`text-4xl font-bold bg-gradient-to-r ${getTheme(user?.theme_primary).from600} ${getTheme(user?.theme_primary).to600} bg-clip-text text-transparent`}>

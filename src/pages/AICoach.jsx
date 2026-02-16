@@ -181,7 +181,7 @@ Provide a concise, actionable response (2-3 paragraphs max) with specific sugges
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 p-6">
+    <div className="p-6">
       <div className="max-w-5xl mx-auto">
         <Mascot pageContext="coach" />
         
