@@ -6,12 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Trophy, Zap, Target, Clock, Star } from "lucide-react";
 import { format } from 'date-fns';
+import { getTheme } from "../components/shared/themeColors";
 
 export default function Challenges() {
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
+
+  const theme = getTheme(user?.theme_primary || 'purple');
 
   const { data: challenges = [] } = useQuery({
     queryKey: ['challenges'],
@@ -39,7 +42,7 @@ export default function Challenges() {
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+          <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>
             Active Challenges 🏆
           </h1>
           <p className="text-gray-600 mt-2">Complete challenges to earn bonus rewards!</p>
@@ -58,7 +61,7 @@ export default function Challenges() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="flex items-center gap-2 mb-2">
-                        <Icon className="w-5 h-5 text-orange-600" />
+                        <Icon className={`w-5 h-5 ${theme.bg.replace('bg-', 'text-')}`} />
                         {challenge.title}
                       </CardTitle>
                       <p className="text-sm text-gray-600">{challenge.description}</p>

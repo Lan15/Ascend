@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Trophy, Crown, Medal, TrendingUp, UserPlus, Copy, Check } from "lucide-react";
 import { startOfWeek, format } from 'date-fns';
 import { toast } from "sonner";
+import { getTheme } from "../components/shared/themeColors";
 
 export default function Leaderboard() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function Leaderboard() {
     queryFn: () => base44.auth.me()
   });
 
+  const theme = getTheme(user?.theme_primary || 'purple');
   const weekStart = format(startOfWeek(new Date()), 'yyyy-MM-dd');
 
   const { data: leaderboard = [] } = useQuery({
@@ -49,14 +51,14 @@ export default function Leaderboard() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>
                 Weekly Leaderboard 🏆
               </h1>
               <p className="text-gray-600 mt-2">Compete with friends this week</p>
             </div>
             <Button
               onClick={() => setInviteDialogOpen(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600"
+              className={`bg-gradient-to-r ${theme.from600} ${theme.to600}`}
             >
               <UserPlus className="w-4 h-4 mr-2" />
               Invite Friends
@@ -64,7 +66,7 @@ export default function Leaderboard() {
           </div>
         </div>
 
-        <Card className="mb-6 bg-gradient-to-br from-purple-500 to-pink-500 text-white">
+        <Card className={`mb-6 bg-gradient-to-br ${theme.from} ${theme.to} text-white`}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -96,7 +98,7 @@ export default function Leaderboard() {
                 <div
                   key={entry.id}
                   className={`flex items-center justify-between p-4 rounded-lg ${
-                    entry.user_email === user?.email ? 'bg-purple-100 border-2 border-purple-500' : 'bg-gray-50'
+                    entry.user_email === user?.email ? `${theme.bg.replace('bg-', 'bg-')}-100 border-2 ${theme.border}` : 'bg-gray-50'
                   }`}
                 >
                   <div className="flex items-center gap-4">

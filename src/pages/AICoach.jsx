@@ -8,6 +8,7 @@ import { Sparkles, Brain, TrendingUp, MapPin, Clock, Lightbulb, Send, Loader2 } 
 import { format, subDays } from 'date-fns';
 import { toast } from "sonner";
 import Mascot from "../components/shared/Mascot";
+import { getTheme } from "../components/shared/themeColors";
 
 export default function AICoach() {
   const [insights, setInsights] = useState([]);
@@ -20,6 +21,8 @@ export default function AICoach() {
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
+
+  const theme = getTheme(user?.theme_primary || 'purple');
 
   const { data: completions = [] } = useQuery({
     queryKey: ['completions'],
@@ -183,13 +186,13 @@ Provide a concise, actionable response (2-3 paragraphs max) with specific sugges
         <Mascot pageContext="coach" />
         
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>
             AI Coach 🧠
           </h1>
           <p className="text-gray-600 mt-2">Personalized insights powered by your patterns</p>
         </div>
 
-        <Card className="mb-6 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+        <Card className={`mb-6 bg-gradient-to-br ${theme.from} ${theme.to} text-white`}>
           <CardContent className="p-6">
             <h3 className="text-xl font-bold mb-4">Ask Your AI Coach</h3>
             <div className="space-y-4">
@@ -209,7 +212,7 @@ Provide a concise, actionable response (2-3 paragraphs max) with specific sugges
                 <Button
                   onClick={askAICoach}
                   disabled={gettingSuggestion}
-                  className="bg-white text-blue-600 hover:bg-gray-100"
+                  className={`bg-white ${theme.bg.replace('bg-', 'text-')} hover:bg-gray-100`}
                 >
                   {gettingSuggestion ? (
                     <>
@@ -238,9 +241,9 @@ Provide a concise, actionable response (2-3 paragraphs max) with specific sugges
         </Card>
 
         {aiResponse && (
-          <Card className="mb-6 border-2 border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50">
+          <Card className={`mb-6 border-2 ${theme.border} bg-gradient-to-br ${theme.from.replace('from-', 'from-').replace('500', '50')} ${theme.to.replace('to-', 'to-').replace('500', '50')}`}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-700">
+              <CardTitle className={`flex items-center gap-2 ${theme.bg.replace('bg-', 'text-').replace('500', '700')}`}>
                 <Sparkles className="w-5 h-5" />
                 AI Coach Response
               </CardTitle>
@@ -257,11 +260,11 @@ Provide a concise, actionable response (2-3 paragraphs max) with specific sugges
           {insights.map((insight, index) => {
             const Icon = insight.icon;
             return (
-              <Card key={index} className="border-l-4 border-blue-500">
+              <Card key={index} className={`border-l-4 ${theme.border}`}>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <Icon className="w-6 h-6 text-blue-600" />
+                    <div className={`p-3 ${theme.bg.replace('bg-', 'bg-').replace('500', '100')} rounded-lg`}>
+                      <Icon className={`w-6 h-6 ${theme.bg.replace('bg-', 'text-').replace('500', '600')}`} />
                     </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-lg mb-2">{insight.title}</h3>
