@@ -81,31 +81,33 @@ const ClockCalendarMascot = ({ activity = 'time' }) => {
             <text x="20" y="35" textAnchor="middle" fontSize="6" fill="#6B7280" fontWeight="bold">9</text>
 
             {/* Clock hands */}
-            <motion.line
-              x1="32"
-              y1="32"
-              x2="32"
-              y2="22"
-              stroke="#1F2937"
-              strokeWidth="2"
-              strokeLinecap="round"
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-              style={{ transformOrigin: '32px 32px' }}
-            />
-            <motion.line
-              x1="32"
-              y1="32"
-              x2="32"
-              y2="18"
-              stroke="#3B82F6"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              animate={{ rotate: [0, 30] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-              style={{ transformOrigin: '32px 32px' }}
-            />
-            <circle cx="32" cy="32" r="2" fill="#1F2937" />
+            <g transform="translate(32, 32)">
+              <motion.line
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="-10"
+                stroke="#1F2937"
+                strokeWidth="2"
+                strokeLinecap="round"
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                style={{ transformOrigin: 'center' }}
+              />
+              <motion.line
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="-14"
+                stroke="#3B82F6"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+                style={{ transformOrigin: 'center' }}
+              />
+              <circle cx="0" cy="0" r="2" fill="#1F2937" />
+            </g>
 
             {/* Calendar pages floating around */}
             <motion.g
@@ -192,7 +194,7 @@ export default function Mascot({ pageContext }) {
           initial={{ x: 300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: 300, opacity: 0 }}
-          className="fixed bottom-20 md:bottom-6 right-6 z-40 max-w-sm"
+          className="fixed bottom-4 right-6 z-40 max-w-sm"
         >
           <Card className="bg-gradient-to-br from-purple-500 to-pink-500 text-white p-4 shadow-2xl">
             <button

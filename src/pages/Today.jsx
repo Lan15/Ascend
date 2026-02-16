@@ -207,10 +207,22 @@ export default function Today() {
   };
 
   const handleDialogOpenChange = (open) => {
-    if (!open && showTimer) {
+    if (!open && showTimer && timerSeconds > 0) {
       // Minimize instead of closing
       setIsMinimized(true);
+    } else {
+      setShowTimer(false);
+      setIsMinimized(false);
     }
+  };
+
+  const handleMinimizedPause = () => {
+    setIsTimerRunning(!isTimerRunning);
+  };
+
+  const handleMinimizedComplete = () => {
+    const minutes = Math.floor(timerSeconds / 60);
+    handleTimerComplete(minutes);
   };
 
   const routineProgress = routines.length > 0 
@@ -424,14 +436,14 @@ export default function Today() {
             isRunning={isTimerRunning}
             targetMinutes={selectedItem.item.target_duration_minutes}
             itemTitle={selectedItem.item.title}
-            onPause={() => {
-              setIsTimerRunning(!isTimerRunning);
-            }}
-            onComplete={() => {
-              const minutes = Math.floor(timerSeconds / 60);
-              handleTimerComplete(minutes);
-            }}
+            onPause={handleMinimizedPause}
+            onComplete={handleMinimizedComplete}
             onMaximize={() => setIsMinimized(false)}
+            onTimerTick={() => {
+              if (isTimerRunning) {
+                setTimerSeconds(prev => prev + 1);
+              }
+            }}
           />
         )}
 

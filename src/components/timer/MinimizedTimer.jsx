@@ -11,7 +11,8 @@ export default function MinimizedTimer({
   onComplete, 
   onMaximize, 
   targetMinutes,
-  itemTitle 
+  itemTitle,
+  onTimerTick
 }) {
   const formatTime = (totalSeconds) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -22,6 +23,16 @@ export default function MinimizedTimer({
 
   const progress = targetMinutes ? Math.min((seconds / (targetMinutes * 60)) * 100, 100) : 0;
   const remainingSeconds = targetMinutes ? Math.max(0, (targetMinutes * 60) - seconds) : 0;
+
+  React.useEffect(() => {
+    if (!isRunning || !onTimerTick) return;
+    
+    const interval = setInterval(() => {
+      onTimerTick();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isRunning, onTimerTick]);
 
   return (
     <motion.div
