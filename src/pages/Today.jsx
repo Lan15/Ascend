@@ -273,13 +273,13 @@ export default function Today() {
   };
 
   const routineProgress = routines.length > 0 
-    ? Math.round((todayCompletions.filter(c => c.routine_id).length / routines.length) * 100)
+    ? Math.min(100, Math.round((todayCompletions.filter(c => c.routine_id).length / routines.length) * 100))
     : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="max-w-4xl mx-auto">
-        <Mascot pageContext="today" />
+        <Mascot pageContext="today" user={user} />
         <ConfettiEffect trigger={showConfetti} />
         
         {/* Header */}
@@ -313,7 +313,7 @@ export default function Today() {
         </div>
 
         {/* Progress Bar */}
-        <Card className="mb-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+        <Card className={`mb-8 bg-gradient-to-r ${user?.theme_primary ? `from-${user.theme_primary}-500 to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-500` : 'from-purple-500 to-pink-500'} text-white`}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
               <span className="font-semibold">Daily Progress</span>
@@ -322,11 +322,11 @@ export default function Today() {
             <div className="w-full bg-white/30 rounded-full h-4 overflow-hidden">
               <div 
                 className="bg-white h-full transition-all duration-500 rounded-full"
-                style={{ width: `${routineProgress}%` }}
+                style={{ width: `${Math.min(100, routineProgress)}%` }}
               />
             </div>
             <p className="text-sm mt-2 opacity-90">
-              {todayCompletions.filter(c => c.routine_id).length} of {routines.length} routines completed
+              {Math.min(todayCompletions.filter(c => c.routine_id).length, routines.length)} of {routines.length} routines completed
             </p>
           </CardContent>
         </Card>
@@ -488,6 +488,11 @@ export default function Today() {
             onPause={handleMinimizedPause}
             onComplete={handleMinimizedComplete}
             onMaximize={() => setIsMinimized(false)}
+            theme={{
+              from: user?.theme_primary ? `from-${user.theme_primary}-500` : 'from-purple-500',
+              to: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-500` : 'to-pink-500',
+              bg: user?.theme_primary ? `bg-${user.theme_primary}-500` : 'bg-purple-500'
+            }}
             onTimerTick={() => {
               setTimerSeconds(prev => prev + 1);
               localStorage.setItem('timerSeconds', (timerSeconds + 1).toString());

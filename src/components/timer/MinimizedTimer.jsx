@@ -12,7 +12,8 @@ export default function MinimizedTimer({
   onMaximize, 
   targetMinutes,
   itemTitle,
-  onTimerTick
+  onTimerTick,
+  theme
 }) {
   const formatTime = (totalSeconds) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -52,7 +53,7 @@ export default function MinimizedTimer({
       animate={{ y: 0, opacity: 1 }}
       className="fixed bottom-4 left-4 z-50 w-80"
     >
-      <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-2xl border-none">
+      <Card className={`bg-gradient-to-r ${theme?.from || 'from-purple-500'} ${theme?.to || 'to-pink-500'} text-white shadow-2xl border-none`}>
         <div className="p-4 pr-6">
           <div className="flex items-start gap-3">
             <Button
@@ -88,7 +89,7 @@ export default function MinimizedTimer({
                   <Button
                     size="sm"
                     onClick={onComplete}
-                    className="bg-white text-purple-600 hover:bg-white/90 h-9 px-3 font-medium"
+                    className={`bg-white ${theme?.bg?.replace('bg-', 'text-') || 'text-purple-600'} hover:bg-white/90 h-9 px-3 font-medium`}
                   >
                     ✓ Done
                   </Button>

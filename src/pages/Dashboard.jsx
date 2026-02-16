@@ -190,7 +190,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <Mascot pageContext="dashboard" />
+        <Mascot pageContext="dashboard" user={user} />
         
         <div className="flex items-center justify-between mb-6">
           <div>
