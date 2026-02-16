@@ -162,12 +162,12 @@ Make it motivational, specific, and actionable.`;
             {/* Header */}
             <div className={`bg-gradient-to-r ${theme.from} ${theme.to} p-6 text-white`}>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-6 h-6" />
+                <div className="w-16 h-16">
+                  <ClocalMascot />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold">AI Coach Daily Insight</h2>
-                  <p className="text-white/80 text-sm">Personalized guidance based on your progress</p>
+                  <h2 className="text-2xl font-bold">CloCal's Daily Insight</h2>
+                  <p className="text-white/80 text-sm">Your personal productivity companion</p>
                 </div>
               </div>
             </div>
