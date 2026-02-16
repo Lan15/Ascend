@@ -322,9 +322,9 @@ export default function Dashboard() {
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          className={`${snapshot.isDragging ? 'opacity-50' : ''} ${colSpanClass}`}
+                          className={`${snapshot.isDragging ? 'opacity-50' : ''} ${colSpanClass} flex`}
                         >
-                          <div className="relative group">
+                          <div className="relative group flex-1">
                             {isCustomizing && (
                               <div
                                 {...provided.dragHandleProps}
