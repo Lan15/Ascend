@@ -52,7 +52,7 @@ export default function ThemeSelector({ primaryColor, background, onPrimaryChang
                 }`}
               >
                 <div className={`h-16 rounded-lg bg-gradient-to-br ${theme.from} ${theme.to} mb-2`} />
-                <p className="text-xs font-medium text-center">{theme.name}</p>
+                <p className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent text-center">{theme.name}</p>
               </button>
             ))}
           </div>
@@ -76,7 +76,7 @@ export default function ThemeSelector({ primaryColor, background, onPrimaryChang
                 }`}
               >
                 <div className={`h-16 rounded-lg ${bg.class} border border-gray-300`} />
-                <p className="text-xs font-medium text-center mt-2">{bg.name}</p>
+                <p className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent text-center mt-2">{bg.name}</p>
               </button>
             ))}
           </div>
