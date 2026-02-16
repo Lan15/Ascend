@@ -88,7 +88,7 @@ export default function MinimizedTimer({
                   <Button
                     size="sm"
                     onClick={onComplete}
-                    className="bg-white text-purple-600 hover:bg-white/90 h-9 px-3 font-medium mr-2"
+                    className="bg-white text-purple-600 hover:bg-white/90 h-9 px-3 font-medium mr-5"
                   >
                     ✓ Done
                   </Button>
