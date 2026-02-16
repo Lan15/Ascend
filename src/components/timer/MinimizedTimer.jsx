@@ -24,27 +24,15 @@ export default function MinimizedTimer({
   const progress = targetMinutes ? Math.min((seconds / (targetMinutes * 60)) * 100, 100) : 0;
   const remainingSeconds = targetMinutes ? Math.max(0, (targetMinutes * 60) - seconds) : 0;
 
-  const startTimeRef = React.useRef(Date.now());
-  const lastTickRef = React.useRef(seconds);
-
   React.useEffect(() => {
     if (!isRunning || !onTimerTick) return;
     
-    startTimeRef.current = Date.now();
-    lastTickRef.current = seconds;
-    
     const interval = setInterval(() => {
-      const elapsedMs = Date.now() - startTimeRef.current;
-      const elapsedSeconds = Math.floor(elapsedMs / 1000);
-      const expectedSeconds = lastTickRef.current + elapsedSeconds;
-      
-      if (expectedSeconds > seconds) {
-        onTimerTick();
-      }
-    }, 100);
+      onTimerTick();
+    }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRunning, onTimerTick, seconds]);
+  }, [isRunning, onTimerTick]);
 
   return (
     <motion.div

@@ -478,9 +478,9 @@ export default function Today() {
             onComplete={handleMinimizedComplete}
             onMaximize={() => setIsMinimized(false)}
             onTimerTick={() => {
-              if (isTimerRunning) {
-                setTimerSeconds(prev => prev + 1);
-              }
+              setTimerSeconds(prev => prev + 1);
+              localStorage.setItem('timerSeconds', (timerSeconds + 1).toString());
+              localStorage.setItem('lastTimerUpdate', Date.now().toString());
             }}
           />
         )}
