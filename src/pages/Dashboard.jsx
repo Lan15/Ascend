@@ -202,7 +202,10 @@ export default function Dashboard() {
         
         <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold text-gray-900">
+            <h1 className="text-4xl font-extrabold text-gray-900" style={{
+              WebkitTextStroke: '2px white',
+              paintOrder: 'stroke fill'
+            }}>
               Welcome back, {user?.full_name || 'User'}!
             </h1>
             <p className="text-gray-600 mt-1">Dashboard: {currentLayoutName}</p>
