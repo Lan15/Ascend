@@ -212,7 +212,7 @@ export default function Dashboard() {
               <select
                 value={currentLayoutName}
                 onChange={(e) => loadLayout(e.target.value)}
-                className={`px-3 py-2 border rounded-lg text-sm focus:ring-2 ${user?.theme_primary ? `focus:ring-${user.theme_primary}-500 focus:border-${user.theme_primary}-500` : 'focus:ring-purple-500 focus:border-purple-500'}`}
+                className={`px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium focus:ring-2 focus:ring-green-400 focus:border-green-400 hover:bg-green-700 transition-colors`}
               >
                 {layouts.map(layout => (
                   <option key={layout.name} value={layout.name}>
@@ -223,10 +223,9 @@ export default function Dashboard() {
             )}
             <Button
               onClick={() => setIsCustomizing(!isCustomizing)}
-              variant={isCustomizing ? "default" : "outline"}
-              className={isCustomizing ? `bg-gradient-to-r ${getTheme(user?.theme_primary).from600} ${getTheme(user?.theme_primary).to600} text-white` : ''}
+              className={`bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg px-4 py-2 flex items-center gap-2 transition-colors`}
             >
-              <Settings className="w-4 h-4 mr-2" />
+              <Plus className="w-5 h-5" />
               {isCustomizing ? 'Done' : 'Customize'}
             </Button>
           </div>
