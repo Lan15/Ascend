@@ -19,10 +19,12 @@ export default function ConsistencyGraph({ routines, goals, completions, theme }
       intervals = eachDayOfInterval({ start: subDays(now, 6), end: now });
       formatString = 'EEE';
     } else if (timeframe === 'month') {
-      intervals = eachWeekOfInterval({ start: subDays(now, 29), end: now });
+      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const weeksInMonth = Math.ceil(daysInMonth / 7);
+      intervals = eachWeekOfInterval({ start: subDays(now, (weeksInMonth - 1) * 7), end: now }).slice(0, weeksInMonth);
       formatString = 'MMM d';
     } else if (timeframe === 'year') {
-      intervals = eachMonthOfInterval({ start: subDays(now, 364), end: now });
+      intervals = eachMonthOfInterval({ start: subDays(now, 330), end: now }).slice(-12);
       formatString = 'MMM';
     }
 
