@@ -7,6 +7,7 @@ import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { TrendingUp, Target, Clock, Award, Calendar } from "lucide-react";
 import { format, subDays, startOfWeek, startOfMonth, startOfYear, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
 import StatsCard from "../components/dashboard/StatsCard";
+import ConsistencyGraph from "../components/progress/ConsistencyGraph";
 
 export default function Progress() {
   const [timeframe, setTimeframe] = useState('week');
@@ -24,6 +25,11 @@ export default function Progress() {
   const { data: completions = [] } = useQuery({
     queryKey: ['completions'],
     queryFn: () => base44.entities.CompletionLog.list('-created_date', 500)
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
   });
 
   // Calculate consistency score
@@ -194,6 +200,20 @@ export default function Progress() {
             </Card>
           </div>
         </Tabs>
+
+        {/* Consistency Tracker */}
+        <div className="mb-8">
+          <ConsistencyGraph 
+            routines={routines}
+            goals={goals}
+            completions={completions}
+            theme={{
+              from: user?.theme_primary ? `from-${user.theme_primary}-500` : 'from-purple-500',
+              to: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-500` : 'to-pink-500',
+              bg: user?.theme_primary ? `bg-${user.theme_primary}-500` : 'bg-purple-500'
+            }}
+          />
+        </div>
 
         {/* Category Breakdown */}
         <Card>

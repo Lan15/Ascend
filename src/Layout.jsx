@@ -157,7 +157,7 @@ export default function Layout({ children, currentPageName }) {
                   <img 
                     src={user.avatar_url} 
                     alt="Profile" 
-                    className="w-10 h-10 rounded-full object-cover border-2 border-purple-500 hover:border-purple-600 transition-all"
+                    className={`w-10 h-10 rounded-full object-cover border-2 ${theme.bg.replace('bg-', 'border-')} hover:opacity-80 transition-all`}
                   />
                   {highestBadge && (
                     <span className="absolute -bottom-1 -right-1 text-sm">
@@ -166,7 +166,7 @@ export default function Layout({ children, currentPageName }) {
                   )}
                 </Link>
               ) : AvatarIcon && (
-                <Link to="/Profile" className={`relative w-10 h-10 ${theme.bg} rounded-full flex items-center justify-center hover:opacity-80 transition-opacity`}>
+                <Link to="/Profile" className={`relative w-10 h-10 ${theme.bg} rounded-full flex items-center justify-center hover:opacity-80 transition-opacity border-2 ${theme.bg.replace('bg-', 'border-')}`}>
                   <AvatarIcon className="w-6 h-6 text-white" />
                   {highestBadge && (
                     <span className="absolute -bottom-1 -right-1 text-sm">
