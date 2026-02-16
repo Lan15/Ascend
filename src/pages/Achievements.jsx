@@ -137,63 +137,59 @@ export default function Achievements() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {achievements.length === 0 ? (
-              <div>
-                <div className="text-center py-8 mb-8">
-                  <Trophy className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-xl font-semibold mb-2">Start Earning Achievements!</h3>
-                  <p className="text-gray-500 mb-6">Complete these starter quests to unlock your first medals</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <Card className="text-center border-2 border-dashed">
-                    <CardContent className="p-6">
-                      <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
-                        <Star className="w-10 h-10 text-gray-400" />
-                      </div>
-                      <h4 className="font-semibold mb-1">First Steps</h4>
-                      <p className="text-sm text-gray-500 mb-3">Complete your first routine</p>
-                      <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
-                    </CardContent>
-                  </Card>
-                  <Card className="text-center border-2 border-dashed">
-                    <CardContent className="p-6">
-                      <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
-                        <Award className="w-10 h-10 text-gray-400" />
-                      </div>
-                      <h4 className="font-semibold mb-1">On Fire!</h4>
-                      <p className="text-sm text-gray-500 mb-3">Maintain a 3-day streak</p>
-                      <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
-                    </CardContent>
-                  </Card>
-                  <Card className="text-center border-2 border-dashed">
-                    <CardContent className="p-6">
-                      <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
-                        <Trophy className="w-10 h-10 text-gray-400" />
-                      </div>
-                      <h4 className="font-semibold mb-1">Goal Getter</h4>
-                      <p className="text-sm text-gray-500 mb-3">Complete your first goal</p>
-                      <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                {achievements.map((achievement, idx) => (
-                  <div key={achievement.id} className="text-center">
-                    <PrestigeBadge 
-                      level={achievement.badge}
-                      size="lg"
-                      rank={idx + 1}
-                      animated={true}
-                    />
-                    <p className="font-semibold mt-3">{achievement.title}</p>
-                    <p className="text-sm text-gray-600 mt-1">{achievement.description}</p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {format(new Date(achievement.earned_date), 'MMM d, yyyy')}
-                    </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <Card className="text-center border-2 border-dashed">
+                <CardContent className="p-6">
+                  <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
+                    <Star className="w-10 h-10 text-gray-400" />
                   </div>
-                ))}
+                  <h4 className="font-semibold mb-1">First Steps</h4>
+                  <p className="text-sm text-gray-500 mb-3">Complete your first routine</p>
+                  <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
+                </CardContent>
+              </Card>
+              <Card className="text-center border-2 border-dashed">
+                <CardContent className="p-6">
+                  <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
+                    <Award className="w-10 h-10 text-gray-400" />
+                  </div>
+                  <h4 className="font-semibold mb-1">On Fire!</h4>
+                  <p className="text-sm text-gray-500 mb-3">Maintain a 3-day streak</p>
+                  <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
+                </CardContent>
+              </Card>
+              <Card className="text-center border-2 border-dashed">
+                <CardContent className="p-6">
+                  <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
+                    <Trophy className="w-10 h-10 text-gray-400" />
+                  </div>
+                  <h4 className="font-semibold mb-1">Goal Getter</h4>
+                  <p className="text-sm text-gray-500 mb-3">Complete your first goal</p>
+                  <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {achievements.length > 0 && (
+              <div>
+                <h3 className="text-xl font-semibold mb-4">Earned Achievements ({achievements.length})</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                  {achievements.map((achievement, idx) => (
+                    <div key={achievement.id} className="text-center">
+                      <PrestigeBadge 
+                        level={achievement.badge}
+                        size="lg"
+                        rank={idx + 1}
+                        animated={true}
+                      />
+                      <p className="font-semibold mt-3">{achievement.title}</p>
+                      <p className="text-sm text-gray-600 mt-1">{achievement.description}</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {format(new Date(achievement.earned_date), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>
