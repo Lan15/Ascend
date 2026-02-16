@@ -305,7 +305,8 @@ export default function Dashboard() {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                style={{ gridAutoRows: 'minmax(0, 1fr)' }}
               >
                 {widgets.map((widgetId, index) => {
                   const widgetConfig = AVAILABLE_WIDGETS.find(w => w.id === widgetId);
