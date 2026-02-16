@@ -31,7 +31,18 @@ export default function Today() {
   });
   const [timerSeconds, setTimerSeconds] = useState(() => {
     const saved = localStorage.getItem('timerState');
-    return saved ? JSON.parse(saved).timerSeconds : 0;
+    if (!saved) return 0;
+    
+    const state = JSON.parse(saved);
+    const lastUpdate = parseInt(localStorage.getItem('lastTimerUpdate') || Date.now().toString());
+    
+    // If timer was running, calculate elapsed time since last update
+    if (state.isTimerRunning) {
+      const elapsed = Math.floor((Date.now() - lastUpdate) / 1000);
+      return state.timerSeconds + elapsed;
+    }
+    
+    return state.timerSeconds;
   });
   const [isTimerRunning, setIsTimerRunning] = useState(() => {
     const saved = localStorage.getItem('timerState');

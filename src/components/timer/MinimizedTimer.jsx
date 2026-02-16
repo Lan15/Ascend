@@ -24,12 +24,24 @@ export default function MinimizedTimer({
   const progress = targetMinutes ? Math.min((seconds / (targetMinutes * 60)) * 100, 100) : 0;
   const remainingSeconds = targetMinutes ? Math.max(0, (targetMinutes * 60) - seconds) : 0;
 
+  const lastUpdateRef = React.useRef(Date.now());
+  
   React.useEffect(() => {
     if (!isRunning || !onTimerTick) return;
     
+    lastUpdateRef.current = Date.now();
+    
     const interval = setInterval(() => {
-      onTimerTick();
-    }, 1000);
+      const now = Date.now();
+      const elapsed = Math.floor((now - lastUpdateRef.current) / 1000);
+      
+      if (elapsed >= 1) {
+        for (let i = 0; i < elapsed; i++) {
+          onTimerTick();
+        }
+        lastUpdateRef.current = now;
+      }
+    }, 100);
 
     return () => clearInterval(interval);
   }, [isRunning, onTimerTick]);
