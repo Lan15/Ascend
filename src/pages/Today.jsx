@@ -278,7 +278,7 @@ export default function Today() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+    <div className="p-6">
       <div className="max-w-4xl mx-auto">
         <Mascot pageContext="today" user={user} />
         <ConfettiEffect trigger={showConfetti} />

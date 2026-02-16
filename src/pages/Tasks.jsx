@@ -95,7 +95,7 @@ export default function Tasks() {
   const completedTasks = tasks.filter(t => t.completed);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+    <div className="p-6">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
