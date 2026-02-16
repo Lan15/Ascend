@@ -186,7 +186,10 @@ Provide a concise, actionable response (2-3 paragraphs max) with specific sugges
         <Mascot pageContext="coach" />
         
         <div className="mb-8">
-          <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>
+          <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`} style={{
+            WebkitTextStroke: '2px white',
+            paintOrder: 'stroke fill'
+          }}>
             AI Coach <span className="text-4xl">🧠</span>
           </h1>
           <p className="text-gray-600 mt-2">Personalized insights powered by your patterns</p>

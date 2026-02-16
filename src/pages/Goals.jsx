@@ -261,7 +261,10 @@ export default function Goals() {
         
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent flex items-center gap-3`}>
+            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent flex items-center gap-3`} style={{
+              WebkitTextStroke: '2px white',
+              paintOrder: 'stroke fill'
+            }}>
               <span>Goals & Achievements</span>
               <span className="text-4xl">🎯</span>
             </h1>

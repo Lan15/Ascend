@@ -99,7 +99,10 @@ export default function Tasks() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>
+            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`} style={{
+              WebkitTextStroke: '2px white',
+              paintOrder: 'stroke fill'
+            }}>
               Tasks <span className="text-4xl">✓</span>
             </h1>
             <p className="text-gray-600 mt-2">Simple checklist for quick tasks</p>

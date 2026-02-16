@@ -42,7 +42,10 @@ export default function Challenges() {
     <div className="p-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>
+          <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`} style={{
+            WebkitTextStroke: '2px white',
+            paintOrder: 'stroke fill'
+          }}>
             Active Challenges <span className="text-4xl">🏆</span>
           </h1>
           <p className="text-gray-600 mt-2">Complete challenges to earn bonus rewards!</p>
