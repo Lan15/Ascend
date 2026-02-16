@@ -202,7 +202,7 @@ export default function Dashboard() {
         
         <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
-            <h1 className="text-4xl font-extrabold text-gray-900" style={{
+            <h1 className={`text-4xl font-extrabold bg-gradient-to-r ${getTheme(user?.theme_primary).from600} ${getTheme(user?.theme_primary).to600} bg-clip-text text-transparent`} style={{
               WebkitTextStroke: '1.5px white',
               paintOrder: 'stroke fill'
             }}>
