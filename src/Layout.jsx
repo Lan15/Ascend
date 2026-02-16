@@ -72,7 +72,7 @@ export default function Layout({ children, currentPageName }) {
     retry: false
   });
 
-  const theme = themeColors[user?.theme_primary || 'purple'];
+  const theme = getTheme(user?.theme_primary || 'purple');
   const bgClass = backgrounds[user?.theme_background || 'gradient'];
   const AvatarIcon = avatarIcons[user?.avatar || 'user'];
   

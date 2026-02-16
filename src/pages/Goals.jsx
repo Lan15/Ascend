@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { toast } from "sonner";
 import SubGoalManager from "../components/goals/SubGoalManager";
 import Mascot from "../components/shared/Mascot";
+import { getTheme } from "../lib/themeColors";
 
 const categories = ["health", "work", "learning", "personal", "fitness", "mindfulness", "career", "finance", "social"];
 
@@ -251,12 +252,7 @@ export default function Goals() {
     </Card>
   );
 
-  const theme = {
-    from: user?.theme_primary ? `from-${user.theme_primary}-600` : 'from-purple-600',
-    to: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-600` : 'to-pink-600',
-    fromHover: user?.theme_primary ? `from-${user.theme_primary}-700` : 'from-purple-700',
-    toHover: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-700` : 'to-pink-700',
-  };
+  const theme = getTheme(user?.theme_primary);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 p-6">
@@ -265,7 +261,7 @@ export default function Goals() {
         
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from} ${theme.to} bg-clip-text text-transparent flex items-center gap-3`}>
+            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent flex items-center gap-3`}>
               <span>Goals & Achievements</span>
               <span className="text-4xl">🎯</span>
             </h1>
@@ -276,7 +272,7 @@ export default function Goals() {
               resetForm();
               setShowDialog(true);
             }}
-            className={`bg-gradient-to-r ${theme.from} ${theme.to} hover:${theme.fromHover} hover:${theme.toHover}`}
+            className={`bg-gradient-to-r ${theme.from600} ${theme.to600} hover:opacity-90`}
           >
             <Plus className="w-4 h-4 mr-2" />
             New Goal

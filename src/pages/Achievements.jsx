@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import PrestigeBadge from "../components/achievements/PrestigeBadge";
 import ShareProgress from "../components/shared/ShareProgress";
 import Mascot from "../components/shared/Mascot";
+import { getTheme } from "../lib/themeColors";
 
 export default function Achievements() {
   const { data: user } = useQuery({
@@ -48,12 +49,7 @@ export default function Achievements() {
     timeSpent: 0
   };
 
-  const theme = {
-    from: user?.theme_primary ? `from-${user.theme_primary}-600` : 'from-yellow-600',
-    to: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-600` : 'to-orange-600',
-    bgFrom: user?.theme_primary ? `from-${user.theme_primary}-500` : 'from-purple-500',
-    bgTo: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-500` : 'to-pink-500',
-  };
+  const theme = getTheme(user?.theme_primary);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-6">
@@ -63,7 +59,7 @@ export default function Achievements() {
         <div className="mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from} ${theme.to} bg-clip-text text-transparent flex items-center gap-3`}>
+              <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent flex items-center gap-3`}>
                 <span>Achievements & Medals</span>
                 <span className="text-4xl">🏆</span>
               </h1>
@@ -71,7 +67,7 @@ export default function Achievements() {
             </div>
             <ShareProgress 
               trigger={
-                <Button variant="outline" className={`gap-2 border-2 hover:bg-gradient-to-r hover:${theme.bgFrom} hover:${theme.bgTo} hover:text-white hover:border-transparent`}>
+                <Button variant="outline" className={`gap-2 border-2 hover:bg-gradient-to-r hover:${theme.from} hover:${theme.to} hover:text-white hover:border-transparent`}>
                   <Share2 className="w-4 h-4" />
                   Share Achievements
                 </Button>
@@ -82,7 +78,7 @@ export default function Achievements() {
         </div>
 
         {/* Level Card */}
-        <Card className={`mb-8 bg-gradient-to-r ${theme.bgFrom} ${theme.bgTo} text-white`}>
+        <Card className={`mb-8 bg-gradient-to-r ${theme.from} ${theme.to} text-white`}>
           <CardContent className="p-8">
             <div className="flex items-center justify-between mb-4">
               <div>

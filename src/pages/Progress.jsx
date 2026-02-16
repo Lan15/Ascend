@@ -8,6 +8,7 @@ import { TrendingUp, Target, Clock, Award, Calendar } from "lucide-react";
 import { format, subDays, startOfWeek, startOfMonth, startOfYear, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
 import StatsCard from "../components/dashboard/StatsCard";
 import ConsistencyGraph from "../components/progress/ConsistencyGraph";
+import { getTheme } from "../lib/themeColors";
 
 export default function Progress() {
   const [timeframe, setTimeframe] = useState('week');
@@ -207,11 +208,7 @@ export default function Progress() {
             routines={routines}
             goals={goals}
             completions={completions}
-            theme={{
-              from: user?.theme_primary ? `from-${user.theme_primary}-500` : 'from-purple-500',
-              to: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-500` : 'to-pink-500',
-              bg: user?.theme_primary ? `bg-${user.theme_primary}-500` : 'bg-purple-500'
-            }}
+            theme={getTheme(user?.theme_primary)}
           />
         </div>
 

@@ -196,7 +196,7 @@ export default function Mascot({ pageContext, user }) {
           exit={{ x: 300, opacity: 0 }}
           className="fixed bottom-4 right-6 z-40 max-w-sm"
         >
-          <Card className={`bg-gradient-to-br ${user?.theme_primary ? `from-${user.theme_primary}-500 to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-500` : 'from-purple-500 to-pink-500'} text-white p-4 shadow-2xl`}>
+          <Card className={`bg-gradient-to-br ${getTheme(user?.theme_primary).from} ${getTheme(user?.theme_primary).to} text-white p-4 shadow-2xl`}>
             <button
               onClick={() => setIsVisible(false)}
               className="absolute top-2 right-2 text-white/80 hover:text-white"

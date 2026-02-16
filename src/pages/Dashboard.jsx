@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Settings, Save, Plus, Trash2, GripVertical } from 'lucide-react';
 import { toast } from "sonner";
 import Mascot from "../components/shared/Mascot";
+import { getTheme } from "../lib/themeColors";
 
 // Widget imports
 import StreakWidget from "../components/dashboard/widgets/StreakWidget";
@@ -216,7 +217,7 @@ export default function Dashboard() {
             <Button
               onClick={() => setIsCustomizing(!isCustomizing)}
               variant={isCustomizing ? "default" : "outline"}
-              className={isCustomizing ? `bg-gradient-to-r ${user?.theme_primary ? `from-${user.theme_primary}-600 to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-600` : 'from-purple-600 to-pink-600'}` : ''}
+              className={isCustomizing ? `bg-gradient-to-r ${getTheme(user?.theme_primary).from600} ${getTheme(user?.theme_primary).to600} text-white` : ''}
             >
               <Settings className="w-4 h-4 mr-2" />
               {isCustomizing ? 'Done' : 'Customize'}

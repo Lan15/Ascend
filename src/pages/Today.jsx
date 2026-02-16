@@ -13,6 +13,7 @@ import ActivityTimer from "../components/timer/ActivityTimer";
 import MinimizedTimer from "../components/timer/MinimizedTimer";
 import StreakSaverDialog from "../components/shared/StreakSaverDialog";
 import Mascot from "../components/shared/Mascot";
+import { getTheme } from "../lib/themeColors";
 import ConfettiEffect from "../components/shared/ConfettiEffect";
 
 export default function Today() {
@@ -313,7 +314,7 @@ export default function Today() {
         </div>
 
         {/* Progress Bar */}
-        <Card className={`mb-8 bg-gradient-to-r ${user?.theme_primary ? `from-${user.theme_primary}-500 to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-500` : 'from-purple-500 to-pink-500'} text-white`}>
+        <Card className={`mb-8 bg-gradient-to-r ${getTheme(user?.theme_primary).from} ${getTheme(user?.theme_primary).to} text-white`}>
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-3">
               <span className="font-semibold">Daily Progress</span>
@@ -488,11 +489,7 @@ export default function Today() {
             onPause={handleMinimizedPause}
             onComplete={handleMinimizedComplete}
             onMaximize={() => setIsMinimized(false)}
-            theme={{
-              from: user?.theme_primary ? `from-${user.theme_primary}-500` : 'from-purple-500',
-              to: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-500` : 'to-pink-500',
-              bg: user?.theme_primary ? `bg-${user.theme_primary}-500` : 'bg-purple-500'
-            }}
+            theme={getTheme(user?.theme_primary)}
             onTimerTick={() => {
               setTimerSeconds(prev => prev + 1);
               localStorage.setItem('timerSeconds', (timerSeconds + 1).toString());

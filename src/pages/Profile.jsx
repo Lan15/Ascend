@@ -12,6 +12,7 @@ import WeeklyReportButton from "../components/profile/WeeklyReportButton";
 import ShareProgress from "../components/shared/ShareProgress";
 import { Save, User as UserIcon, Upload, Image as ImageIcon, Download, Share2 } from "lucide-react";
 import { toast } from "sonner";
+import { getTheme } from "../lib/themeColors";
 
 export default function Profile() {
   const queryClient = useQueryClient();
@@ -257,7 +258,7 @@ export default function Profile() {
                 <label className="block text-sm font-medium mb-2">Upload Custom Avatar</label>
                 <div className="flex items-center gap-4">
                   {avatarUrl && (
-                    <img src={avatarUrl} alt="Avatar" className={`w-20 h-20 rounded-full object-cover border-2 ${themePrimary ? `border-${themePrimary}-500` : 'border-purple-500'}`} />
+                    <img src={avatarUrl} alt="Avatar" className="w-20 h-20 rounded-full object-cover border-2" style={{ borderColor: getTheme(themePrimary).bg.replace('bg-', '#') }} />
                   )}
                   <div className="flex-1">
                     <Input
@@ -297,7 +298,7 @@ export default function Profile() {
           <Button
             onClick={handleSave}
             disabled={updateMutation.isPending}
-            className={`bg-gradient-to-r ${themePrimary ? `from-${themePrimary}-600 to-${themePrimary === 'purple' ? 'pink' : themePrimary}-600` : 'from-purple-600 to-pink-600'} text-white`}
+            className={`bg-gradient-to-r ${getTheme(themePrimary).from600} ${getTheme(themePrimary).to600} text-white hover:opacity-90`}
           >
             <Save className="w-4 h-4 mr-2" />
             {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
