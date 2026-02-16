@@ -212,7 +212,8 @@ Provide a concise, actionable response (2-3 paragraphs max) with specific sugges
                 <Button
                   onClick={askAICoach}
                   disabled={gettingSuggestion}
-                  className={`bg-white ${theme.bg.replace('bg-', 'text-')} hover:bg-gray-100`}
+                  variant="outline"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                 >
                   {gettingSuggestion ? (
                     <>
