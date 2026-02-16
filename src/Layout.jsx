@@ -32,22 +32,6 @@ const avatarIcons = {
   sparkles: Sparkles
 };
 
-const themeColors = {
-  purple: { from: 'from-purple-500', to: 'to-pink-500', bg: 'bg-purple-500' },
-  blue: { from: 'from-blue-500', to: 'to-cyan-500', bg: 'bg-blue-500' },
-  green: { from: 'from-green-500', to: 'to-emerald-500', bg: 'bg-green-500' },
-  orange: { from: 'from-orange-500', to: 'to-red-500', bg: 'bg-orange-500' },
-  pink: { from: 'from-pink-500', to: 'to-rose-500', bg: 'bg-pink-500' },
-  red: { from: 'from-red-500', to: 'to-pink-500', bg: 'bg-red-500' },
-  teal: { from: 'from-teal-500', to: 'to-blue-500', bg: 'bg-teal-500' },
-  indigo: { from: 'from-indigo-500', to: 'to-purple-500', bg: 'bg-indigo-500' },
-  cyberpunk: { from: 'from-cyan-400', to: 'to-pink-600', bg: 'bg-cyan-500' },
-  forest: { from: 'from-green-600', to: 'to-emerald-800', bg: 'bg-green-700' },
-  ocean: { from: 'from-blue-900', to: 'to-cyan-600', bg: 'bg-blue-700' },
-  sunset: { from: 'from-orange-600', to: 'to-purple-900', bg: 'bg-orange-600' },
-  midnight: { from: 'from-indigo-900', to: 'to-purple-950', bg: 'bg-indigo-900' }
-};
-
 const backgrounds = {
   gradient: 'bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50',
   'solid-light': 'bg-gray-50',
