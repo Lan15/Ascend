@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Award, Star, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { format } from 'date-fns';
 import PrestigeBadge from "../components/achievements/PrestigeBadge";
 import ShareProgress from "../components/shared/ShareProgress";
@@ -11,6 +12,8 @@ import Mascot from "../components/shared/Mascot";
 import { getTheme } from "../components/shared/themeColors";
 
 export default function Achievements() {
+  const [selectedBadge, setSelectedBadge] = useState('all');
+
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
@@ -39,8 +42,13 @@ export default function Achievements() {
   const badgeTypes = ['bronze', 'silver', 'gold', 'platinum', 'diamond'];
   const achievementsByBadge = badgeTypes.map(badge => ({
     badge,
-    count: achievements.filter(a => a.badge === badge).length
+    earned: achievements.filter(a => a.badge === badge && a.earned_date).length,
+    total: achievements.filter(a => a.badge === badge).length
   }));
+
+  const filteredAchievements = selectedBadge === 'all' 
+    ? achievements 
+    : achievements.filter(a => a.badge === selectedBadge);
 
   const shareStats = {
     streak: 0,
@@ -103,95 +111,86 @@ export default function Achievements() {
           </CardContent>
         </Card>
 
-        {/* Badge Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          {achievementsByBadge.map(({ badge, count }) => {
-            const colors = {
-              bronze: "from-orange-400 to-orange-600",
-              silver: "from-gray-300 to-gray-500",
-              gold: "from-yellow-400 to-yellow-600",
-              platinum: "from-cyan-400 to-blue-600",
-              diamond: "from-purple-400 to-pink-600"
-            };
+        {/* Badge Filter Tabs */}
+        <Tabs value={selectedBadge} onValueChange={setSelectedBadge} className="mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-6">
+            <TabsTrigger value="all">All</TabsTrigger>
+            {badgeTypes.map(badge => (
+              <TabsTrigger key={badge} value={badge} className="capitalize">
+                {badge}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-            return (
-              <Card key={badge} className="text-center">
-                <CardContent className="p-6">
-                  <div className={`w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br ${colors[badge]} flex items-center justify-center`}>
-                    <Award className="w-8 h-8 text-white" />
-                  </div>
-                  <p className="text-2xl font-bold">{count}</p>
-                  <p className="text-sm text-gray-500 capitalize">{badge}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+          {/* Badge Summary Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            {achievementsByBadge.map(({ badge, earned, total }) => {
+              const colors = {
+                bronze: "from-orange-400 to-orange-600",
+                silver: "from-gray-300 to-gray-500",
+                gold: "from-yellow-400 to-yellow-600",
+                platinum: "from-cyan-400 to-blue-600",
+                diamond: "from-purple-400 to-pink-600"
+              };
+
+              return (
+                <Card 
+                  key={badge} 
+                  className={`text-center cursor-pointer transition-all ${selectedBadge === badge ? 'ring-2 ring-offset-2 ring-' + badge : ''}`}
+                  onClick={() => setSelectedBadge(badge)}
+                >
+                  <CardContent className="p-6">
+                    <div className={`w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br ${colors[badge]} flex items-center justify-center`}>
+                      <Award className="w-8 h-8 text-white" />
+                    </div>
+                    <p className="text-2xl font-bold">{earned}/{total}</p>
+                    <p className="text-sm text-gray-500 capitalize">{badge}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </Tabs>
 
         {/* Achievements Grid */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Star className="w-5 h-5 text-yellow-600" />
-              All Achievements ({achievements.length})
+              {selectedBadge === 'all' ? 'All Achievements' : `${selectedBadge.charAt(0).toUpperCase() + selectedBadge.slice(1)} Achievements`} ({filteredAchievements.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <Card className="text-center border-2 border-dashed">
-                <CardContent className="p-6">
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
-                    <Star className="w-10 h-10 text-gray-400" />
-                  </div>
-                  <h4 className="font-semibold mb-1">First Steps</h4>
-                  <p className="text-sm text-gray-500 mb-3">Complete your first routine</p>
-                  <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
-                </CardContent>
-              </Card>
-              <Card className="text-center border-2 border-dashed">
-                <CardContent className="p-6">
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
-                    <Award className="w-10 h-10 text-gray-400" />
-                  </div>
-                  <h4 className="font-semibold mb-1">On Fire!</h4>
-                  <p className="text-sm text-gray-500 mb-3">Maintain a 3-day streak</p>
-                  <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
-                </CardContent>
-              </Card>
-              <Card className="text-center border-2 border-dashed">
-                <CardContent className="p-6">
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
-                    <Trophy className="w-10 h-10 text-gray-400" />
-                  </div>
-                  <h4 className="font-semibold mb-1">Goal Getter</h4>
-                  <p className="text-sm text-gray-500 mb-3">Complete your first goal</p>
-                  <span className="text-xs bg-gray-100 px-3 py-1 rounded-full">🔒 Locked</span>
-                </CardContent>
-              </Card>
-            </div>
-            
-            {achievements.length > 0 && (
-              <div>
-                <h3 className="text-xl font-semibold mb-4">Earned Achievements ({achievements.length})</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                  {achievements.map((achievement, idx) => (
-                    <div key={achievement.id} className="text-center">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {filteredAchievements.map((achievement, idx) => {
+                const isEarned = !!achievement.earned_date;
+                return (
+                  <div key={achievement.id} className={`text-center ${!isEarned ? 'opacity-50' : ''}`}>
+                    {isEarned ? (
                       <PrestigeBadge 
                         level={achievement.badge}
                         size="lg"
                         rank={idx + 1}
                         animated={true}
                       />
-                      <p className="font-semibold mt-3">{achievement.title}</p>
-                      <p className="text-sm text-gray-600 mt-1">{achievement.description}</p>
+                    ) : (
+                      <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
+                        <Trophy className="w-10 h-10 text-gray-400" />
+                      </div>
+                    )}
+                    <p className="font-semibold mt-3">{achievement.title}</p>
+                    <p className="text-sm text-gray-600 mt-1">{achievement.description}</p>
+                    {isEarned ? (
                       <p className="text-xs text-gray-400 mt-1">
                         {format(new Date(achievement.earned_date), 'MMM d, yyyy')}
                       </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                    ) : (
+                      <span className="text-xs bg-gray-100 px-3 py-1 rounded-full inline-block mt-2">🔒 Locked</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </CardContent>
         </Card>
 
