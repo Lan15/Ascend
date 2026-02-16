@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Lightbulb, Star, TrendingUp, Award } from 'lucide-react';
 import { Card } from "@/components/ui/card";
+import { getTheme } from "./themeColors";
 
 const mascotMessages = [
   { type: 'tip', icon: Lightbulb, message: "Did you know? Consistency is more important than perfection. Small daily actions lead to big results!" },
