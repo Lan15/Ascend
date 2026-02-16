@@ -129,9 +129,9 @@ export default function Layout({ children, currentPageName }) {
               {user?.full_name && (
                 <>
                   <div className="hidden md:flex flex-col items-end">
-                    <span className="text-sm font-bold text-gray-900">
-                      {user.full_name}
-                    </span>
+                        <span className="text-sm font-bold text-gray-900" style={{ WebkitTextStroke: '0.8px white', paintOrder: 'stroke fill' }}>
+                          {user.full_name}
+                        </span>
                     <span className="text-xs text-gray-500">
                       Lv {currentLevel} • {levelRank}
                     </span>
