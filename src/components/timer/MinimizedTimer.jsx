@@ -66,14 +66,33 @@ export default function MinimizedTimer({
             
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium truncate mb-2">{itemTitle}</div>
-              <div className="flex items-center gap-2 mb-2">
-                <Timer className="w-5 h-5 flex-shrink-0" />
-                <span className="font-mono font-bold text-2xl">{formatTime(seconds)}</span>
-                {targetMinutes && (
-                  <span className="text-sm opacity-90">
-                    / {formatTime(targetMinutes * 60)}
-                  </span>
-                )}
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2">
+                  <Timer className="w-5 h-5 flex-shrink-0" />
+                  <span className="font-mono font-bold text-2xl">{formatTime(seconds)}</span>
+                  {targetMinutes && (
+                    <span className="text-sm opacity-90">
+                      / {formatTime(targetMinutes * 60)}
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={onPause}
+                    className="text-white hover:bg-white/20 h-9 w-9 p-0"
+                  >
+                    <span className="text-xl">{isRunning ? '⏸' : '▶'}</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={onComplete}
+                    className="bg-white text-purple-600 hover:bg-white/90 h-9 px-3 font-medium"
+                  >
+                    ✓ Done
+                  </Button>
+                </div>
               </div>
               {targetMinutes && (
                 <div className="bg-white/30 rounded-full h-2 overflow-hidden">
@@ -83,24 +102,6 @@ export default function MinimizedTimer({
                   />
                 </div>
               )}
-            </div>
-
-            <div className="flex flex-col gap-2 flex-shrink-0">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onPause}
-                className="text-white hover:bg-white/20 h-9 w-9 p-0"
-              >
-                <span className="text-xl">{isRunning ? '⏸' : '▶'}</span>
-              </Button>
-              <Button
-                size="sm"
-                onClick={onComplete}
-                className="bg-white text-purple-600 hover:bg-white/90 h-9 px-3 font-medium"
-              >
-                ✓ Done
-              </Button>
             </div>
           </div>
         </div>
