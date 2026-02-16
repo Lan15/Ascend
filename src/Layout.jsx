@@ -65,12 +65,16 @@ export default function Layout({ children, currentPageName }) {
   const currentLevel = Math.floor(Math.sqrt((user?.total_xp || 0) / 100));
   
   const getLevelRank = (level) => {
-    if (level === 0) return 'Beginner';
-    if (level < 5) return 'Novice';
-    if (level < 10) return 'Apprentice';
-    if (level < 20) return 'Expert';
-    if (level < 50) return 'Master';
-    return 'Legend';
+    if (level <= 10) return 'Beginner';
+    if (level <= 20) return 'Novice';
+    if (level <= 35) return 'Apprentice';
+    if (level <= 50) return 'Intermediate';
+    if (level <= 70) return 'Adept';
+    if (level <= 90) return 'Expert';
+    if (level <= 115) return 'Master';
+    if (level <= 140) return 'Grandmaster';
+    if (level <= 170) return 'Legendary';
+    return 'Divine';
   };
   
   const levelRank = getLevelRank(currentLevel);
@@ -200,7 +204,7 @@ export default function Layout({ children, currentPageName }) {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1">
+        <main className="flex-1 min-h-screen">
           {children}
         </main>
       </div>
