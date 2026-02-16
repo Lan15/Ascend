@@ -192,7 +192,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto">
         <Mascot pageContext="dashboard" user={user} />
         
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
               Welcome back, {user?.full_name || 'User'}!
@@ -204,7 +204,7 @@ export default function Dashboard() {
               <select
                 value={currentLayoutName}
                 onChange={(e) => loadLayout(e.target.value)}
-                className="px-3 py-2 border rounded-lg text-sm"
+                className={`px-3 py-2 border rounded-lg text-sm focus:ring-2 ${user?.theme_primary ? `focus:ring-${user.theme_primary}-500 focus:border-${user.theme_primary}-500` : 'focus:ring-purple-500 focus:border-purple-500'}`}
               >
                 {layouts.map(layout => (
                   <option key={layout.name} value={layout.name}>
@@ -216,6 +216,7 @@ export default function Dashboard() {
             <Button
               onClick={() => setIsCustomizing(!isCustomizing)}
               variant={isCustomizing ? "default" : "outline"}
+              className={isCustomizing ? `bg-gradient-to-r ${user?.theme_primary ? `from-${user.theme_primary}-600 to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-600` : 'from-purple-600 to-pink-600'}` : ''}
             >
               <Settings className="w-4 h-4 mr-2" />
               {isCustomizing ? 'Done' : 'Customize'}
