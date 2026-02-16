@@ -200,7 +200,7 @@ export default function Dashboard() {
           goals={goals}
         />
         
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <div className="flex items-center justify-between mb-8 flex-wrap gap-4 pt-4">
           <div>
             <h1 className={`text-4xl font-extrabold bg-gradient-to-r ${getTheme(user?.theme_primary).from600} ${getTheme(user?.theme_primary).to600} bg-clip-text text-transparent`}>
               Welcome back, {user?.full_name || 'User'}!
