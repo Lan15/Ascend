@@ -53,7 +53,7 @@ export default function MinimizedTimer({
       className="fixed bottom-4 left-4 z-50 w-80"
     >
       <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-2xl border-none">
-        <div className="p-4">
+        <div className="p-4 pr-6">
           <div className="flex items-start gap-3">
             <Button
               size="icon"
