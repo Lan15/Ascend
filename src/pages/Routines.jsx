@@ -143,11 +143,8 @@ export default function Routines() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`} style={{
-              WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
-              paintOrder: 'stroke fill'
-            }}>
-              Daily Routines <span className="text-4xl" style={{ WebkitTextStroke: '0.5px rgba(255,255,255,0.4)', paintOrder: 'stroke fill' }}>🌟</span>
+            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from600} ${theme.to600} bg-clip-text text-transparent`}>
+              Daily Routines <span className="text-4xl">🌟</span>
             </h1>
             <p className="text-gray-600 mt-2">Build habits that stick</p>
           </div>

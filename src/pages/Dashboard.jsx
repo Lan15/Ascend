@@ -203,7 +203,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
           <div>
             <h1 className="text-4xl font-extrabold text-gray-900" style={{
-              WebkitTextStroke: '0.5px rgba(255,255,255,0.4)',
+              WebkitTextStroke: '1.5px white',
               paintOrder: 'stroke fill'
             }}>
               Welcome back, {user?.full_name || 'User'}!
