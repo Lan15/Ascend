@@ -255,7 +255,7 @@ export default function Goals() {
   const theme = getTheme(user?.theme_primary);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 p-6">
+    <div className="p-6">
       <div className="max-w-5xl mx-auto">
         <Mascot pageContext="goals" user={user} />
         
