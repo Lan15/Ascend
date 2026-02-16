@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play, Pause, Square, Timer } from "lucide-react";
 
-export default function ActivityTimer({ onComplete, targetMinutes }) {
+export default function ActivityTimer({ onComplete, targetMinutes, onTimerUpdate }) {
   const [isRunning, setIsRunning] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const intervalRef = useRef(null);

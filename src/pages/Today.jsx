@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,9 +7,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle2, Circle, Timer, Trophy, Sparkles, Music, Pause } from "lucide-react";
-import { format } from 'date-fns';
+import { format, differenceInDays, startOfDay } from 'date-fns';
 import { toast } from "sonner";
 import ActivityTimer from "../components/timer/ActivityTimer";
+import MinimizedTimer from "../components/timer/MinimizedTimer";
+import StreakSaverDialog from "../components/shared/StreakSaverDialog";
 import Mascot from "../components/shared/Mascot";
 import ConfettiEffect from "../components/shared/ConfettiEffect";
 
@@ -17,10 +19,14 @@ export default function Today() {
   const queryClient = useQueryClient();
   const [selectedItem, setSelectedItem] = useState(null);
   const [showTimer, setShowTimer] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
   const [learning, setLearning] = useState('');
   const [notes, setNotes] = useState('');
   const [showConfetti, setShowConfetti] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
+  const [showStreakSaver, setShowStreakSaver] = useState(false);
   
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -43,6 +49,24 @@ export default function Today() {
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
+
+  // Check for streak break and offer gem save
+  useEffect(() => {
+    const checkStreakBreak = async () => {
+      if (user?.current_streak > 0 && user?.last_activity_date) {
+        const lastActivity = startOfDay(new Date(user.last_activity_date));
+        const today = startOfDay(new Date());
+        const daysSince = differenceInDays(today, lastActivity);
+        
+        // If more than 1 day has passed, offer to save streak
+        if (daysSince > 1 && user.gems >= 50 && todayCompletions.length === 0) {
+          setShowStreakSaver(true);
+        }
+      }
+    };
+    
+    checkStreakBreak();
+  }, [user, todayCompletions]);
 
   const completeMutation = useMutation({
     mutationFn: async ({ item, timeSpent, type }) => {
@@ -160,11 +184,33 @@ export default function Today() {
   };
 
   const handleTimerComplete = (timeSpent) => {
+    setIsMinimized(false);
     completeMutation.mutate({
       item: selectedItem.item,
       timeSpent,
       type: selectedItem.type
     });
+  };
+
+  const handleSaveStreak = async () => {
+    try {
+      await base44.auth.updateMe({
+        gems: (user?.gems || 0) - 50,
+        last_activity_date: format(new Date(), 'yyyy-MM-dd')
+      });
+      queryClient.invalidateQueries(['currentUser']);
+      setShowStreakSaver(false);
+      toast.success(`🔥 Streak saved! ${user?.current_streak} days maintained.`);
+    } catch (error) {
+      toast.error('Failed to save streak');
+    }
+  };
+
+  const handleDialogOpenChange = (open) => {
+    if (!open && showTimer) {
+      // Minimize instead of closing
+      setIsMinimized(true);
+    }
   };
 
   const routineProgress = routines.length > 0 
@@ -332,7 +378,7 @@ export default function Today() {
         )}
 
         {/* Timer Dialog */}
-        <Dialog open={showTimer} onOpenChange={setShowTimer}>
+        <Dialog open={showTimer && !isMinimized} onOpenChange={handleDialogOpenChange}>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Complete: {selectedItem?.item.title}</DialogTitle>
@@ -342,6 +388,10 @@ export default function Today() {
               <ActivityTimer 
                 onComplete={handleTimerComplete}
                 targetMinutes={selectedItem?.item.target_duration_minutes}
+                onTimerUpdate={(seconds, running) => {
+                  setTimerSeconds(seconds);
+                  setIsTimerRunning(running);
+                }}
               />
               
               <div>
@@ -366,6 +416,33 @@ export default function Today() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Minimized Timer */}
+        {showTimer && isMinimized && selectedItem && (
+          <MinimizedTimer
+            seconds={timerSeconds}
+            isRunning={isTimerRunning}
+            targetMinutes={selectedItem.item.target_duration_minutes}
+            itemTitle={selectedItem.item.title}
+            onPause={() => {
+              setIsTimerRunning(!isTimerRunning);
+            }}
+            onComplete={() => {
+              const minutes = Math.floor(timerSeconds / 60);
+              handleTimerComplete(minutes);
+            }}
+            onMaximize={() => setIsMinimized(false)}
+          />
+        )}
+
+        {/* Streak Saver Dialog */}
+        <StreakSaverDialog
+          open={showStreakSaver}
+          onClose={() => setShowStreakSaver(false)}
+          onConfirm={handleSaveStreak}
+          streakDays={user?.current_streak || 0}
+          gemCost={50}
+        />
       </div>
     </div>
   );
