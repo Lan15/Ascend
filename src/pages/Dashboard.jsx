@@ -305,8 +305,7 @@ export default function Dashboard() {
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"
-                style={{ gridAutoRows: '1fr' }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-auto"
               >
                 {widgets.map((widgetId, index) => {
                   const widgetConfig = AVAILABLE_WIDGETS.find(w => w.id === widgetId);
@@ -322,9 +321,9 @@ export default function Dashboard() {
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          className={`${snapshot.isDragging ? 'opacity-50' : ''} ${colSpanClass} flex`}
+                          className={`${snapshot.isDragging ? 'opacity-50' : ''} ${colSpanClass} flex items-stretch`}
                         >
-                          <div className="relative group flex-1">
+                          <div className="relative group flex-1 flex flex-col">
                             {isCustomizing && (
                               <div
                                 {...provided.dragHandleProps}
@@ -333,13 +332,15 @@ export default function Dashboard() {
                                 <GripVertical className="w-5 h-5 text-gray-400" />
                               </div>
                             )}
-                            <WidgetComponent
-                              user={user}
-                              routines={routines}
-                              goals={goals}
-                              completions={completions}
-                              achievements={achievements}
-                            />
+                            <div className="flex-1 flex flex-col">
+                              <WidgetComponent
+                                user={user}
+                                routines={routines}
+                                goals={goals}
+                                completions={completions}
+                                achievements={achievements}
+                              />
+                            </div>
                           </div>
                         </div>
                       )}
