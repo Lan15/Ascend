@@ -11,15 +11,24 @@ export default function ActivityTimer({ onComplete, targetMinutes, onTimerUpdate
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setSeconds(s => s + 1);
+        setSeconds(s => {
+          const newSeconds = s + 1;
+          if (onTimerUpdate) {
+            onTimerUpdate(newSeconds, true);
+          }
+          return newSeconds;
+        });
       }, 1000);
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      if (onTimerUpdate) {
+        onTimerUpdate(seconds, false);
+      }
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isRunning]);
+  }, [isRunning, seconds, onTimerUpdate]);
 
   const formatTime = (totalSeconds) => {
     const hours = Math.floor(totalSeconds / 3600);
