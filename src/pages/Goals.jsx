@@ -19,6 +19,10 @@ const categories = ["health", "work", "learning", "personal", "fitness", "mindfu
 
 export default function Goals() {
   const queryClient = useQueryClient();
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
   const [showDialog, setShowDialog] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
   const [formData, setFormData] = useState({
@@ -247,15 +251,23 @@ export default function Goals() {
     </Card>
   );
 
+  const theme = {
+    from: user?.theme_primary ? `from-${user.theme_primary}-600` : 'from-purple-600',
+    to: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-600` : 'to-pink-600',
+    fromHover: user?.theme_primary ? `from-${user.theme_primary}-700` : 'from-purple-700',
+    toHover: user?.theme_primary ? `to-${user.theme_primary === 'purple' ? 'pink' : user.theme_primary}-700` : 'to-pink-700',
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 p-6">
       <div className="max-w-5xl mx-auto">
-        <Mascot pageContext="goals" />
+        <Mascot pageContext="goals" user={user} />
         
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Goals & Achievements 🎯
+            <h1 className={`text-4xl font-bold bg-gradient-to-r ${theme.from} ${theme.to} bg-clip-text text-transparent flex items-center gap-3`}>
+              <span>Goals & Achievements</span>
+              <span className="text-4xl">🎯</span>
             </h1>
             <p className="text-gray-600 mt-2">Set goals and conquer them</p>
           </div>
@@ -264,7 +276,7 @@ export default function Goals() {
               resetForm();
               setShowDialog(true);
             }}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            className={`bg-gradient-to-r ${theme.from} ${theme.to} hover:${theme.fromHover} hover:${theme.toHover}`}
           >
             <Plus className="w-4 h-4 mr-2" />
             New Goal
