@@ -95,6 +95,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', tooltip: 'Overview & Stats' },
     { name: 'Today', icon: CheckSquare, path: 'Today', tooltip: "Today's Tasks" },
+    { name: 'Tasks', icon: CheckSquare, path: 'Tasks', tooltip: 'Quick Checklist' },
     { name: 'Routines', icon: Calendar, path: 'Routines', tooltip: 'Daily Habits' },
     { name: 'Goals', icon: Target, path: 'Goals', tooltip: 'Set & Track Goals' },
     { name: 'Challenges', icon: Trophy, path: 'Challenges', tooltip: 'Active Challenges', highlight: true },

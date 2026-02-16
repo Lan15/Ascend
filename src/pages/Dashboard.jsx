@@ -38,7 +38,7 @@ const AVAILABLE_WIDGETS = [
   { id: 'goals', name: 'Goals Progress', component: GoalsWidget, defaultSpan: 1 },
   { id: 'recent', name: 'Recent Completions', component: RecentCompletionsWidget, defaultSpan: 1 },
   { id: 'ai', name: 'AI Insights', component: AIInsightsWidget, defaultSpan: 2 },
-  { id: 'tasks', name: 'Task Progress', component: TaskProgressWidget, defaultSpan: 1 },
+  { id: 'tasks', name: 'Progress', component: TaskProgressWidget, defaultSpan: 1 },
   { id: 'worldclock', name: 'World Clock', component: WorldClockWidget, defaultSpan: 1 },
   { id: 'quickactions', name: 'Quick Actions', component: QuickActionsWidget, defaultSpan: 1 },
   { id: 'activegoals', name: 'Active Goals', component: ActiveGoalsWidget, defaultSpan: 1 },
