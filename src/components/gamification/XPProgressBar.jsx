@@ -18,10 +18,16 @@ export default function XPProgressBar({ totalXp = 0, compact = false }) {
   const progress = xpNeededForNextLevel > 0 ? (xpInCurrentLevel / xpNeededForNextLevel) * 100 : 0;
 
   const getLevelBadge = () => {
-    if (level < 5) return { icon: Zap, color: 'from-gray-400 to-gray-600', name: 'Beginner' };
-    if (level < 10) return { icon: Star, color: 'from-blue-400 to-blue-600', name: 'Intermediate' };
-    if (level < 20) return { icon: Award, color: 'from-purple-400 to-purple-600', name: 'Advanced' };
-    return { icon: Award, color: 'from-yellow-400 to-yellow-600', name: 'Master' };
+    if (level <= 10) return { icon: Zap, color: 'from-gray-400 to-gray-600', name: 'Beginner' };
+    if (level <= 20) return { icon: Star, color: 'from-blue-400 to-blue-600', name: 'Novice' };
+    if (level <= 35) return { icon: Star, color: 'from-green-400 to-green-600', name: 'Apprentice' };
+    if (level <= 50) return { icon: Award, color: 'from-cyan-400 to-cyan-600', name: 'Intermediate' };
+    if (level <= 70) return { icon: Award, color: 'from-indigo-400 to-indigo-600', name: 'Adept' };
+    if (level <= 90) return { icon: Award, color: 'from-purple-400 to-purple-600', name: 'Expert' };
+    if (level <= 115) return { icon: Award, color: 'from-yellow-400 to-yellow-600', name: 'Master' };
+    if (level <= 140) return { icon: Award, color: 'from-orange-400 to-red-600', name: 'Grandmaster' };
+    if (level <= 170) return { icon: Award, color: 'from-pink-400 to-rose-600', name: 'Legendary' };
+    return { icon: Award, color: 'from-violet-500 to-purple-700', name: 'Divine' };
   };
 
   const badge = getLevelBadge();
