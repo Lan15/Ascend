@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import { toast } from "sonner";
 import SubGoalManager from "../components/goals/SubGoalManager";
 import Mascot from "../components/shared/Mascot";
-import { getTheme } from "../lib/themeColors";
+import { getTheme } from "../components/shared/themeColors";
 
 const categories = ["health", "work", "learning", "personal", "fitness", "mindfulness", "career", "finance", "social"];
 

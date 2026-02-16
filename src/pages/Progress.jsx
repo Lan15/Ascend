@@ -8,7 +8,7 @@ import { TrendingUp, Target, Clock, Award, Calendar } from "lucide-react";
 import { format, subDays, startOfWeek, startOfMonth, startOfYear, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval } from 'date-fns';
 import StatsCard from "../components/dashboard/StatsCard";
 import ConsistencyGraph from "../components/progress/ConsistencyGraph";
-import { getTheme } from "../lib/themeColors";
+import { getTheme } from "../components/shared/themeColors";
 
 export default function Progress() {
   const [timeframe, setTimeframe] = useState('week');

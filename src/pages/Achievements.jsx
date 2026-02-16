@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import PrestigeBadge from "../components/achievements/PrestigeBadge";
 import ShareProgress from "../components/shared/ShareProgress";
 import Mascot from "../components/shared/Mascot";
-import { getTheme } from "../lib/themeColors";
+import { getTheme } from "../components/shared/themeColors";
 
 export default function Achievements() {
   const { data: user } = useQuery({

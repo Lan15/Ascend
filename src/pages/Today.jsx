@@ -13,7 +13,7 @@ import ActivityTimer from "../components/timer/ActivityTimer";
 import MinimizedTimer from "../components/timer/MinimizedTimer";
 import StreakSaverDialog from "../components/shared/StreakSaverDialog";
 import Mascot from "../components/shared/Mascot";
-import { getTheme } from "../lib/themeColors";
+import { getTheme } from "../components/shared/themeColors";
 import ConfettiEffect from "../components/shared/ConfettiEffect";
 
 export default function Today() {

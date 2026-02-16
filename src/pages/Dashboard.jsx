@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Settings, Save, Plus, Trash2, GripVertical } from 'lucide-react';
 import { toast } from "sonner";
 import Mascot from "../components/shared/Mascot";
-import { getTheme } from "../lib/themeColors";
+import { getTheme } from "../components/shared/themeColors";
 
 // Widget imports
 import StreakWidget from "../components/dashboard/widgets/StreakWidget";

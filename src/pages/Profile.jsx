@@ -12,7 +12,7 @@ import WeeklyReportButton from "../components/profile/WeeklyReportButton";
 import ShareProgress from "../components/shared/ShareProgress";
 import { Save, User as UserIcon, Upload, Image as ImageIcon, Download, Share2 } from "lucide-react";
 import { toast } from "sonner";
-import { getTheme } from "../lib/themeColors";
+import { getTheme } from "../components/shared/themeColors";
 
 export default function Profile() {
   const queryClient = useQueryClient();
@@ -258,7 +258,7 @@ export default function Profile() {
                 <label className="block text-sm font-medium mb-2">Upload Custom Avatar</label>
                 <div className="flex items-center gap-4">
                   {avatarUrl && (
-                    <img src={avatarUrl} alt="Avatar" className="w-20 h-20 rounded-full object-cover border-2" style={{ borderColor: getTheme(themePrimary).bg.replace('bg-', '#') }} />
+                    <img src={avatarUrl} alt="Avatar" className={`w-20 h-20 rounded-full object-cover border-2 ${getTheme(themePrimary).border}`} />
                   )}
                   <div className="flex-1">
                     <Input
