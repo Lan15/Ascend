@@ -1,0 +1,156 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "avatar": {
+      "type": "string",
+      "enum": [
+        "user",
+        "smile",
+        "heart",
+        "star",
+        "zap",
+        "trophy",
+        "target",
+        "rocket",
+        "crown",
+        "sparkles"
+      ],
+      "default": "user",
+      "description": "Avatar icon choice"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Custom avatar image URL"
+    },
+    "theme_primary": {
+      "type": "string",
+      "enum": [
+        "purple",
+        "blue",
+        "green",
+        "orange",
+        "pink",
+        "red",
+        "teal",
+        "indigo",
+        "cyberpunk",
+        "forest",
+        "ocean",
+        "sunset",
+        "midnight"
+      ],
+      "default": "purple",
+      "description": "Primary theme color"
+    },
+    "theme_background": {
+      "type": "string",
+      "enum": [
+        "gradient",
+        "solid-light",
+        "solid-dark",
+        "pattern",
+        "matrix",
+        "starfield",
+        "abstract",
+        "minimal"
+      ],
+      "default": "gradient",
+      "description": "Background theme"
+    },
+    "total_xp": {
+      "type": "number",
+      "default": 0,
+      "description": "Total experience points earned"
+    },
+    "gems": {
+      "type": "number",
+      "default": 0,
+      "description": "Premium currency for special features"
+    },
+    "current_streak": {
+      "type": "number",
+      "default": 0,
+      "description": "Days in a row with completions"
+    },
+    "longest_streak": {
+      "type": "number",
+      "default": 0,
+      "description": "Highest streak ever achieved"
+    },
+    "last_activity_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Last day user completed a task"
+    },
+    "prestige_level": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times user has prestiged"
+    },
+    "weekly_report_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to send weekly progress reports"
+    },
+    "health_sync_provider": {
+      "type": "string",
+      "enum": [
+        "apple_health",
+        "google_fit",
+        "strava"
+      ],
+      "description": "Connected health tracking provider"
+    },
+    "spotify_access_token": {
+      "type": "string",
+      "description": "Spotify OAuth access token"
+    },
+    "spotify_refresh_token": {
+      "type": "string",
+      "description": "Spotify OAuth refresh token"
+    },
+    "spotify_token_expires": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the Spotify token expires"
+    },
+    "spotify_auto_pause": {
+      "type": "boolean",
+      "default": true,
+      "description": "Auto-pause music on routine completion"
+    },
+    "dashboard_layouts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "widgets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "description": "Saved dashboard layouts with widget configurations"
+    },
+    "active_dashboard_layout": {
+      "type": "string",
+      "description": "Name of currently active dashboard layout"
+    }
+  },
+  "required": [
+    "avatar_url",
+    "last_activity_date",
+    "health_sync_provider",
+    "spotify_access_token",
+    "spotify_refresh_token",
+    "spotify_token_expires",
+    "dashboard_layouts",
+    "active_dashboard_layout"
+  ]
+}

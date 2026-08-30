@@ -1,0 +1,51 @@
+{
+  "name": "Routine",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Name of the routine"
+    },
+    "description": {
+      "type": "string",
+      "description": "Details about the routine"
+    },
+    "tracking_type": {
+      "type": "string",
+      "enum": [
+        "time_tracked",
+        "completion_only"
+      ],
+      "default": "time_tracked",
+      "description": "Whether to track time or just mark as done"
+    },
+    "target_duration_minutes": {
+      "type": "number",
+      "description": "Target time to spend on this routine in minutes"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "health",
+        "work",
+        "learning",
+        "personal",
+        "fitness",
+        "mindfulness"
+      ],
+      "description": "Category of the routine"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Icon name for the routine"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this routine is currently active"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

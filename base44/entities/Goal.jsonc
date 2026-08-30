@@ -1,0 +1,112 @@
+{
+  "name": "Goal",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Name of the goal"
+    },
+    "description": {
+      "type": "string",
+      "description": "Details about the goal"
+    },
+    "tracking_type": {
+      "type": "string",
+      "enum": [
+        "time_tracked",
+        "completion_only"
+      ],
+      "default": "completion_only",
+      "description": "Whether to track time or just mark as done"
+    },
+    "target_duration_minutes": {
+      "type": "number",
+      "description": "Target time to achieve this goal in minutes"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "health",
+        "work",
+        "learning",
+        "personal",
+        "fitness",
+        "mindfulness",
+        "career",
+        "finance",
+        "social"
+      ],
+      "description": "Category of the goal"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Target completion date"
+    },
+    "is_time_bounded": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this goal has a strict time limit"
+    },
+    "time_bound_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Exact date and time the goal must be completed by"
+    },
+    "is_lost": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this goal was lost due to missing the time bound"
+    },
+    "lost_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the goal was marked as lost"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this goal has been achieved"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the goal was completed"
+    },
+    "parent_goal_id": {
+      "type": "string",
+      "description": "ID of the parent goal if this is a sub-goal"
+    },
+    "is_recurring": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a recurring goal"
+    },
+    "recurrence_pattern": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "every_other_day",
+        "weekly",
+        "biweekly",
+        "monthly"
+      ],
+      "description": "How often the goal recurs"
+    },
+    "recurrence_days": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "Days of week for recurring goals (0=Sunday, 6=Saturday)"
+    },
+    "is_long_term": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a long-term overarching goal"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "Leaderboard",
+  "type": "object",
+  "properties": {
+    "week_start": {
+      "type": "string",
+      "format": "date",
+      "description": "Start of the week"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User's email"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "User's display name"
+    },
+    "weekly_xp": {
+      "type": "number",
+      "default": 0,
+      "description": "XP earned this week"
+    },
+    "weekly_completions": {
+      "type": "number",
+      "default": 0,
+      "description": "Completions this week"
+    },
+    "weekly_streak": {
+      "type": "number",
+      "default": 0,
+      "description": "Days active this week"
+    },
+    "rank": {
+      "type": "number",
+      "description": "Current rank"
+    }
+  },
+  "required": [
+    "week_start",
+    "user_email"
+  ]
+}

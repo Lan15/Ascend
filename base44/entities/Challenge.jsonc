@@ -1,0 +1,69 @@
+{
+  "name": "Challenge",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Challenge name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Challenge details"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "streak",
+        "completion_count",
+        "time_based",
+        "category_specific"
+      ],
+      "description": "Type of challenge"
+    },
+    "target_value": {
+      "type": "number",
+      "description": "Target to achieve (e.g., 7 for 7-day streak)"
+    },
+    "reward_xp": {
+      "type": "number",
+      "description": "XP reward for completing"
+    },
+    "reward_gems": {
+      "type": "number",
+      "description": "Gems reward for completing"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Challenge start date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Challenge end date"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether challenge is currently active"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "health",
+        "work",
+        "learning",
+        "personal",
+        "fitness",
+        "mindfulness"
+      ],
+      "description": "Challenge category filter"
+    }
+  },
+  "required": [
+    "title",
+    "type",
+    "target_value",
+    "reward_xp"
+  ]
+}

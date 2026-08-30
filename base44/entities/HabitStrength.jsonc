@@ -1,0 +1,38 @@
+{
+  "name": "HabitStrength",
+  "type": "object",
+  "properties": {
+    "routine_id": {
+      "type": "string",
+      "description": "Routine ID"
+    },
+    "strength_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Strength score (0-100)"
+    },
+    "consistency_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Percentage of days completed in last 30 days"
+    },
+    "longest_streak": {
+      "type": "number",
+      "default": 0,
+      "description": "Longest streak for this habit"
+    },
+    "last_completed": {
+      "type": "string",
+      "format": "date",
+      "description": "Last completion date"
+    },
+    "total_completions": {
+      "type": "number",
+      "default": 0,
+      "description": "Total times completed"
+    }
+  },
+  "required": [
+    "routine_id"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "CompletionLog",
+  "type": "object",
+  "properties": {
+    "routine_id": {
+      "type": "string",
+      "description": "ID of the routine completed"
+    },
+    "goal_id": {
+      "type": "string",
+      "description": "ID of the goal completed"
+    },
+    "completion_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of completion"
+    },
+    "time_spent_minutes": {
+      "type": "number",
+      "description": "Time spent in minutes"
+    },
+    "learning": {
+      "type": "string",
+      "description": "What was learned from this completion"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or reflections"
+    }
+  },
+  "required": [
+    "completion_date"
+  ]
+}
